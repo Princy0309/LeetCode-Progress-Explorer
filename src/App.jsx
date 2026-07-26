@@ -36,7 +36,15 @@ export default function App() {
         loading={loading}
       />
 
-     <UserProfile data={userData} />
+      {loading && (
+        <div className='text-center my-4'>
+          <div className='spinner-border text-primary' role="status">
+            <span className='visually-hidden'>Loading....</span>
+          </div>
+        </div>
+      )}
+
+     {!loading && userData && <UserProfile data={userData} />}
     </div>
   );
 }
