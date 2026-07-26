@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import SearchBox from './components/SearchBox';
 import { fetchLeetCodeData } from './services/leetcodeApi';
+import UserProfile from './components/UserProfile';
 
 export default function App() {
   const [username, setUsername] = useState('');
@@ -32,7 +33,7 @@ export default function App() {
         loading={loading}
       />
 
-     
+     <UserProfile data={userData} />
     </div>
   );
 }
