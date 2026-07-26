@@ -2,12 +2,15 @@ import { useState } from 'react';
 import SearchBox from './components/SearchBox';
 import { fetchLeetCodeData } from './services/leetcodeApi';
 import UserProfile from './components/UserProfile';
+import { fetchUserBadges } from './services/leetcodeApi';
+import  Badges  from './components/Badges'
 
 export default function App() {
   const [username, setUsername] = useState('');
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [badges, setBadges] = useState(null);
 
   const handleSearch = async () => {
     if (!username.trim()) {
@@ -18,23 +21,32 @@ export default function App() {
     setLoading(true);
     setError(null);
     setUserData(null);
+    setBadges(null);
 
     try {
-      const data = await fetchLeetCodeData(username);
-      
-      // If your service returns null or an error structure, catch it
-      if (!data) {
-        throw new Error("User not found. Please check the username and try again!");
+      const[solvedData, badgeData] = await Promise.allSettled([
+        fetchLeetCodeData(username), fetchUserBadges(username)
+      ]);
+
+      const solved = solvedData.status === 'fulfilled' ? solvedData.value : null;
+      const badges = badgeData.status === 'fulfilled' ? badgeData.value : null;
+
+      if(!solved){
+        throw new Error("User not found.")
       }
 
-      setUserData(data);
-    } catch (err) {
-      setError(err.message || "Failed to fetch user data. Please try again.");
-      setUserData(null);
-    } finally {
-      setLoading(false);
-    }
-  };
+      setUserData(solved);
+      setBadges(badges);
+  }
+  catch (err) {
+    setError(err.message || "Failed to fetch user data. Please try again.");
+    setUserData(null);
+    setBadges(null);
+  }
+  finally{
+    setLoading(false);
+  }
+};
 
   return (
     <div className="container mt-5">
@@ -63,8 +75,9 @@ export default function App() {
         </div>
       )}
 
-      {/* User Profile Component */}
+      
       {!loading && userData && <UserProfile data={userData} />}
+      {badges && <Badges badges={badges} />}
     </div>
   );
 }
