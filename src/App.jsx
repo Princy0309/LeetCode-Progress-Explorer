@@ -9,7 +9,10 @@ export default function App() {
   const [loading, setLoading] = useState(false);
 
   const handleSearch = async () => {
-    if (!username.trim()) return;
+    if (!username.trim()){
+      alert("Please enter a valid username")
+     return;
+    }
     
     setLoading(true);
     try {
