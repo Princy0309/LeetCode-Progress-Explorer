@@ -104,3 +104,35 @@ export async function fetchUserContest(username) {
     return { contestRating: 0, contestGlobalRanking: "N/A", contestAttend: 0 };
   }
 }
+
+export async function fetchRecentSubmissions(username) {
+  const query = `
+    query recentAcSubmissions($username: String!) {
+      recentAcSubmissionList(username: $username, limit: 15) {
+        id
+        title
+        titleSlug
+        timestamp
+      }
+    }
+  `;
+
+  try {
+    const response = await fetch(`${CORS_PROXY}${LEETCODE_GRAPHQL}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query,
+        variables: { username },
+      }),
+    });
+
+    const data = await response.json();
+    return data?.data?.recentAcSubmissionList || [];
+  } catch (error) {
+    console.error("Error fetching recent submissions:", error);
+    return [];
+  }
+}
