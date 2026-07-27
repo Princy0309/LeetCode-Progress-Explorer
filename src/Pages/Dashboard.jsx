@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import SearchBox from '../components/SearchBox';
 import { fetchLeetCodeData, fetchRecentSubmissions } from '../services/leetcodeApi';
 import UserProfile from '../components/UserProfile';
@@ -11,13 +11,51 @@ import VisualInsights from '../components/VisualInsights';
 import RecentSubmissions from '../components/RecentSubmissions';
 
 export default function App() {
-  const [username, setUsername] = useState('');
-  const [userData, setUserData] = useState(null);
+  const [username, setUsername] = useState(() => {
+    return localStorage.getItem('lc_search_username') || '';
+  });
+  const [userData, setUserData] = useState(() => {
+    const saved = localStorage.getItem('lc_user_data');
+    return saved ? JSON.parse(saved) : null;
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [badges, setBadges] = useState(null);
-  const [contestData, setContestData] = useState(null);
-  const [submissions, setSubmissions] = useState(null);
+  const [badges, setBadges] = useState(() => {
+    const saved = localStorage.getItem('lc_badges');
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [contestData, setContestData] = useState(() => {
+    const saved = localStorage.getItem('lc_contest_data');
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [submissions, setSubmissions] = useState(() => {
+    const saved = localStorage.getItem('lc_submissions');
+    return saved ? JSON.parse(saved) : null;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('lc_search_username', username);
+  }, [username]);
+
+  useEffect(() => {
+    if (userData) localStorage.setItem('lc_user_data', JSON.stringify(userData));
+    else localStorage.removeItem('lc_user_data');
+  }, [userData]);
+
+  useEffect(() => {
+    if (badges) localStorage.setItem('lc_badges', JSON.stringify(badges));
+    else localStorage.removeItem('lc_badges');
+  }, [badges]);
+
+  useEffect(() => {
+    if (contestData) localStorage.setItem('lc_contest_data', JSON.stringify(contestData));
+    else localStorage.removeItem('lc_contest_data');
+  }, [contestData]);
+
+  useEffect(() => {
+    if (submissions) localStorage.setItem('lc_submissions', JSON.stringify(submissions));
+    else localStorage.removeItem('lc_submissions');
+  }, [submissions]);
 
   const handleSearch = async () => {
     if (!username.trim()) {
@@ -33,7 +71,6 @@ export default function App() {
     setSubmissions(null);
 
     try {
-      // 1. All 4 promises are correctly destructured here
       const [solvedData, badgeData, contestRes, submissionRes] = await Promise.allSettled([
         fetchLeetCodeData(username), 
         fetchUserBadges(username), 
@@ -44,7 +81,7 @@ export default function App() {
       const solved = solvedData.status === 'fulfilled' ? solvedData.value : null;
       const badgesVal = badgeData.status === 'fulfilled' ? badgeData.value : null;
       const contestVal = contestRes.status === 'fulfilled' ? contestRes.value : null;
-      const submissionVal = submissionRes.status === 'fulfilled' ? submissionRes.value : null; // Added
+      const submissionVal = submissionRes.status === 'fulfilled' ? submissionRes.value : null;
 
       if (!solved) {
         throw new Error("User not found.");
@@ -53,7 +90,7 @@ export default function App() {
       setUserData(solved);
       setBadges(badgesVal);
       setContestData(contestVal);
-      setSubmissions(submissionVal); // Added
+      setSubmissions(submissionVal);
     } catch (err) {
       setError(err.message || "Failed to fetch user data. Please try again.");
       setUserData(null);

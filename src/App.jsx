@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
-import PracticePage from './pages/PracticePage';
+import GoalTracker from './Pages/GoalTracker';
 
 export default function App() {
   return (
@@ -17,7 +17,7 @@ export default function App() {
       <div className="container">
         <Routes>
           <Route path="/" element={<Dashboard />} />
-          <Route path="/practice" element={<PracticePage />} />
+          <Route path="/practice" element={<GoalTracker />} />
         </Routes>
       </div>
     </BrowserRouter>
