@@ -4,6 +4,8 @@ import { fetchLeetCodeData } from './services/leetcodeApi';
 import UserProfile from './components/UserProfile';
 import { fetchUserBadges } from './services/leetcodeApi';
 import  Badges  from './components/Badges'
+import ContestStats from './components/ContestStats';
+import { fetchUserContest } from './services/leetcodeApi';
 
 export default function App() {
   const [username, setUsername] = useState('');
@@ -11,6 +13,7 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [badges, setBadges] = useState(null);
+  const [contestData, setContestData] = useState(null);
 
   const handleSearch = async () => {
     if (!username.trim()) {
@@ -24,12 +27,13 @@ export default function App() {
     setBadges(null);
 
     try {
-      const[solvedData, badgeData] = await Promise.allSettled([
-        fetchLeetCodeData(username), fetchUserBadges(username)
+      const[solvedData, badgeData, contestRes] = await Promise.allSettled([
+        fetchLeetCodeData(username), fetchUserBadges(username), fetchUserContest(username)
       ]);
 
       const solved = solvedData.status === 'fulfilled' ? solvedData.value : null;
       const badges = badgeData.status === 'fulfilled' ? badgeData.value : null;
+      const contestVal = contestRes.status === 'fulfilled' ? contestRes.value:null;
 
       if(!solved){
         throw new Error("User not found.")
@@ -37,6 +41,7 @@ export default function App() {
 
       setUserData(solved);
       setBadges(badges);
+      setContestData(contestVal)
   }
   catch (err) {
     setError(err.message || "Failed to fetch user data. Please try again.");
@@ -78,6 +83,7 @@ export default function App() {
       
       {!loading && userData && <UserProfile data={userData} />}
       {badges && <Badges badges={badges} />}
+      {contestData && <ContestStats contestData={contestData} />}
     </div>
   );
 }
