@@ -6,6 +6,7 @@ import { fetchUserBadges } from './services/leetcodeApi';
 import  Badges  from './components/Badges'
 import ContestStats from './components/ContestStats';
 import { fetchUserContest } from './services/leetcodeApi';
+import CompareUsers from './components/CompareUsers';
 
 export default function App() {
   const [username, setUsername] = useState('');
@@ -84,6 +85,7 @@ export default function App() {
       {!loading && userData && <UserProfile data={userData} />}
       {badges && <Badges badges={badges} />}
       {contestData && <ContestStats contestData={contestData} />}
+      <CompareUsers />
     </div>
   );
 }
