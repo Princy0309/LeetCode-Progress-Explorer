@@ -84,9 +84,9 @@ export default function App() {
 
       
       {!loading && userData && <UserProfile data={userData} />}
+      <VisualInsights solved={userData} />
       {badges && <Badges badges={badges} />}
       {contestData && <ContestStats contestData={contestData} />}
-      <VisualInsights solved={userData} />
       <CompareUsers />
       
     </div>
