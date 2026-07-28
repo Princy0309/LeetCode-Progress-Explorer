@@ -4,17 +4,17 @@ export default function GoalTracker() {
   const [viewMode, setViewMode] = useState('weekly');
 
   const [weeklyGoals, setWeeklyGoals] = useState(() => {
-    const saved = sessionStorage.getItem('lc_weekly_goals');
+    const saved = localStorage.getItem('lc_weekly_goals');
     return saved ? JSON.parse(saved) : { easy: '', medium: '', hard: '' };
   });
 
   const [monthlyGoals, setMonthlyGoals] = useState(() => {
-    const saved = sessionStorage.getItem('lc_monthly_goals');
+    const saved = localStorage.getItem('lc_monthly_goals');
     return saved ? JSON.parse(saved) : { easy: '', medium: '', hard: '' };
   });
 
   const [completed, setCompleted] = useState(() => {
-    const saved = sessionStorage.getItem('lc_goal_completed');
+    const saved = localStorage.getItem('lc_goal_completed');
     return saved ? JSON.parse(saved) : { 
       weekly: { easy: 0, medium: 0, hard: 0 }, 
       monthly: { easy: 0, medium: 0, hard: 0 } 
@@ -22,15 +22,15 @@ export default function GoalTracker() {
   });
 
   useEffect(() => {
-    sessionStorage.setItem('lc_weekly_goals', JSON.stringify(weeklyGoals));
+    localStorage.setItem('lc_weekly_goals', JSON.stringify(weeklyGoals));
   }, [weeklyGoals]);
 
   useEffect(() => {
-    sessionStorage.setItem('lc_monthly_goals', JSON.stringify(monthlyGoals));
+    localStorage.setItem('lc_monthly_goals', JSON.stringify(monthlyGoals));
   }, [monthlyGoals]);
 
   useEffect(() => {
-    sessionStorage.setItem('lc_goal_completed', JSON.stringify(completed));
+    localStorage.setItem('lc_goal_completed', JSON.stringify(completed));
   }, [completed]);
 
   const currentGoals = viewMode === 'weekly' ? weeklyGoals : monthlyGoals;
