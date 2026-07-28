@@ -13,7 +13,11 @@ export default function App() {
     sessionStorage.clear();
   }
 
-  const [darkMode, setDarkMode] = useState(true);
+  const [darkMode, setDarkMode] = useState(() => {
+    const savedTheme = localStorage.getItem('lc_app_dark_mode');
+    return savedTheme !== null ? JSON.parse(savedTheme) : true;
+  });
+
   const [username, setUsername] = useState(() => sessionStorage.getItem('lc_app_username') || '');
   const [userData, setUserData] = useState(() => {
     const saved = sessionStorage.getItem('lc_app_userdata');
@@ -35,6 +39,7 @@ export default function App() {
   });
 
   useEffect(() => {
+    localStorage.setItem('lc_app_dark_mode', JSON.stringify(darkMode));
     document.body.className = darkMode ? 'bg-dark text-light' : 'bg-light text-dark';
   }, [darkMode]);
 
@@ -135,11 +140,12 @@ export default function App() {
                   loading={loading}
                   error={error}
                   onSearch={handleSearch}
+                  darkMode={darkMode}
                 />
               } 
             />
-            <Route path="/practice" element={<GoalTracker />} />
-            <Route path="/compare" element={<ComparePage />} />
+            <Route path="/practice" element={<GoalTracker darkMode={darkMode} />} />
+            <Route path="/compare" element={<ComparePage darkMode={darkMode} />} />
           </Routes>
         </div>
       </div>
