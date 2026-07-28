@@ -1,3 +1,4 @@
+/* Core Variables & Theme Defaults */
 :root {
   --bg-core: #080808;
   --bg-surface: #121212;
@@ -11,22 +12,21 @@
 }
 
 body {
-  background-color: var(--bg-core);
-  color: var(--text-main);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   margin: 0;
   padding: 0;
   -webkit-font-smoothing: antialiased;
 }
 
+/* Global Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--bg-core);
+  background: inherit;
 }
 ::-webkit-scrollbar-thumb {
-  background: #262626;
+  background: #ccc;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
@@ -62,83 +62,67 @@ body {
   color: #fff;
 }
 
-.card, .list-group-item {
+
+/* ==========================================
+   DARK MODE EXCLUSIVE OVERRIDES
+   ================================          */
+body.bg-dark {
+  background-color: var(--bg-core) !important;
+  color: var(--text-main) !important;
+}
+
+body.bg-dark ::-webkit-scrollbar-track {
+  background: var(--bg-core);
+}
+body.bg-dark ::-webkit-scrollbar-thumb {
+  background: #262626;
+}
+
+body.bg-dark .card, 
+body.bg-dark .list-group-item {
   background-color: var(--bg-surface) !important;
   color: var(--text-main) !important;
   border-color: var(--border-subtle) !important;
-}
-
-.list-group-item {
-  transition: background-color 0.2s ease;
-}
-
-.list-group-item:hover {
-  background-color: var(--bg-surface-hover) !important;
-}
-
-.card .card, .card .bg-white, .card .bg-light, div[class*="shadow"] div {
-  background-color: var(--bg-surface-hover) !important;
-  color: var(--text-main) !important;
-}
-
-.card div {
-  color: inherit;
-}
-
-.card .card-body, .card .card-body *, .card [class*="card"], .card [class*="bg-"] {
-  background-color: var(--bg-surface-hover) !important;
-  color: var(--text-main) !important;
-}
-
-.card small, .card .text-muted, .card p, .card span {
-  color: #d1d1d1 !important;
-}
-
-input.form-control, input[type="text"] {
-  background-color: var(--bg-surface) !important;
-  color: var(--text-main) !important;
-  border: 1px solid var(--border-subtle) !important;
-}
-
-input.form-control:focus, input[type="text"]:focus {
-  background-color: var(--bg-surface-hover) !important;
-  color: var(--text-main) !important;
-  border-color: var(--fire-orange) !important;
-  box-shadow: 0 0 10px var(--fire-orange-glow) !important;
-}
-
-.card input.form-control, .card input[type="text"], .card input {
-  background-color: var(--bg-surface-hover) !important;
-  color: var(--text-main) !important;
-  border: 1px solid var(--border-subtle) !important;
-}
-
-.card input.form-control:focus, .card input[type="text"]:focus, .card input:focus {
-  background-color: var(--bg-core) !important;
-  color: var(--text-main) !important;
-  border-color: var(--fire-orange) !important;
-  box-shadow: 0 0 10px var(--fire-orange-glow) !important;
-}
-
-input::placeholder {
-  color: var(--text-muted) !important;
-}
-
-.card, .list-group-item {
-  background-color: var(--bg-surface) !important;
-  color: var(--text-main) !important;
-  border: 1px solid var(--border-subtle) !important;
   border-radius: 1rem !important;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5) !important;
 }
 
-.card .card, .card .card-body, .card .list-group-item, div[class*="shadow"] div {
+body.bg-dark .list-group-item:hover {
+  background-color: var(--bg-surface-hover) !important;
+}
+
+body.bg-dark .card .card, 
+body.bg-dark .card .card-body, 
+body.bg-dark .card .list-group-item, 
+body.bg-dark div[class*="shadow"] div {
   background-color: var(--bg-surface-hover) !important;
   color: var(--text-main) !important;
   border-color: var(--border-subtle) !important;
 }
 
-.card input.form-control, .card input[type="text"], .card input {
+body.bg-dark .card small, 
+body.bg-dark .card .text-muted, 
+body.bg-dark .card span {
+  color: #b0b0b0 !important;
+}
+
+body.bg-dark .card h4, 
+body.bg-dark .card h3, 
+body.bg-dark .card h2, 
+body.bg-dark .card h5, 
+body.bg-dark .card h6 {
+  color: #ffffff !important;
+}
+
+body.bg-dark .card hr, 
+body.bg-dark hr {
+  border-color: #2a2a2a !important;
+  opacity: 1 !important;
+}
+
+body.bg-dark input.form-control, 
+body.bg-dark input[type="text"], 
+body.bg-dark input {
   background-color: #161616 !important;
   color: #ffffff !important;
   border: 1px solid #333333 !important;
@@ -147,7 +131,9 @@ input::placeholder {
   transition: all 0.2s ease !important;
 }
 
-.card input.form-control:focus, .card input[type="text"]:focus, .card input:focus {
+body.bg-dark input.form-control:focus, 
+body.bg-dark input[type="text"]:focus, 
+body.bg-dark input:focus {
   background-color: #1f1f1f !important;
   color: #ffffff !important;
   border-color: var(--fire-orange) !important;
@@ -155,101 +141,72 @@ input::placeholder {
   outline: none !important;
 }
 
-input::placeholder {
+body.bg-dark input::placeholder {
   color: #666666 !important;
 }
 
-.card small, .card .text-muted, .card span {
-  color: #b0b0b0 !important;
+
+/* ==========================================
+   LIGHT MODE: TRANSPARENT LIGHT GREY CARDS
+   ================================          */
+body.bg-light {
+  background-color: #f4f6f9 !important;
+  color: #212529 !important;
 }
 
-.card h4, .card h3, .card h2, .card h5, .card h6 {
-  color: #ffffff !important;
+body.bg-light .card {
+  background-color: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03) !important;
+  border-radius: 1rem !important;
+  color: #212529 !important;
 }
 
-.card hr, hr {
-  border-color: #2a2a2a !important;
-  opacity: 1 !important;
+body.bg-light .card .card,
+body.bg-light .card .card-body,
+body.bg-light .card div[class*="border"],
+body.bg-light .card div[class*="bg-"] {
+  background-color: rgba(240, 242, 245, 0.6) !important;
+  color: #212529 !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
 }
 
-.btn-group, .btn-group-vertical {
-  background: var(--bg-surface) !important;
-  padding: 6px !important;
-  border-radius: 12px !important;
-  border: 1px solid var(--border-subtle) !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
-  gap: 8px !important;
+body.bg-light input.form-control, 
+body.bg-light input[type="text"] {
+  background-color: #ffffff !important;
+  color: #212529 !important;
+  border: 1px solid #ced4da !important;
+  border-radius: 0.5rem !important;
 }
 
-.btn-group .btn {
-  border-radius: 8px !important;
-  border: none !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.5px !important;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+body.bg-light input.form-control:focus, 
+body.bg-light input[type="text"]:focus {
+  background-color: #ffffff !important;
+  color: #212529 !important;
+  border-color: #86b7fe !important;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15) !important;
 }
 
-.btn-group .btn:nth-child(1) {
-  color: #00e676 !important;
-  background-color: rgba(0, 230, 118, 0.08) !important;
-}
-.btn-group .btn:nth-child(1):hover, .btn-group .btn:nth-child(1).active {
-  background-color: #00e676 !important;
-  color: #080808 !important;
-  box-shadow: 0 0 15px rgba(0, 230, 118, 0.4) !important;
+body.bg-light input::placeholder {
+  color: #adb5bd !important;
 }
 
-.btn-group .btn:nth-child(2) {
-  color: #ff9800 !important;
-  background-color: rgba(255, 152, 0, 0.08) !important;
-}
-.btn-group .btn:nth-child(2):hover, .btn-group .btn:nth-child(2).active {
-  background-color: #ff9800 !important;
-  color: #080808 !important;
-  box-shadow: 0 0 15px rgba(255, 152, 0, 0.4) !important;
-}
-
-.btn-group .btn:nth-child(3) {
-  color: #ff5722 !important;
-  background-color: rgba(255, 87, 34, 0.08) !important;
-}
-.btn-group .btn:nth-child(3):hover, .btn-group .btn:nth-child(3).active {
-  background: var(--fire-orange-gradient) !important;
-  color: #ffffff !important;
-  box-shadow: 0 0 15px var(--fire-orange-glow) !important;
+body.bg-light .card h1,
+body.bg-light .card h2,
+body.bg-light .card h3,
+body.bg-light .card h4,
+body.bg-light .card h5,
+body.bg-light .card h6 {
+  color: #212529 !important;
 }
 
-
-/* Easy Tier Glow & Border */
-.practice-goal-container .easy-card {
-  border-color: #a3e635 !important;
-  background-color: rgba(163, 230, 53, 0.03);
-  box-shadow: 0 10px 30px -10px rgba(163, 230, 53, 0.15);
+body.bg-light h1,
+body.bg-light h2,
+body.bg-light h3,
+body.bg-light h4,
+body.bg-light h5,
+body.bg-light h6 {
+  color: #212529 !important;
 }
-.practice-goal-container .easy-card input:focus {
-  border-color: #a3e635 !important;
-  box-shadow: 0 0 0 3px rgba(163, 230, 53, 0.2);
-}
-
-/* Medium Tier Glow & Border */
-.practice-goal-container .medium-card {
-  border-color: #fb923c !important;
-  background-color: rgba(251, 146, 60, 0.03);
-  box-shadow: 0 10px 30px -10px rgba(251, 146, 60, 0.15);
-}
-.practice-goal-container .medium-card input:focus {
-  border-color: #fb923c !important;
-  box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.2);
-}
-
-/* Hard Tier Glow & Border */
-.practice-goal-container .hard-card {
-  border-color: #fb7185 !important;
-  background-color: rgba(251, 113, 133, 0.03);
-  box-shadow: 0 10px 30px -10px rgba(251, 113, 133, 0.15);
-}
-.practice-goal-container .hard-card input:focus {
-  border-color: #fb7185 !important;
-  box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.2);
-}
-
