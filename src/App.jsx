@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
-import GoalTracker from './Pages/GoalTracker';
+import GoalTracker from './pages/GoalTracker';
 import ComparePage from './pages/ComparePage';
+import ThemeToggle from './components/themeToggle';
 import { fetchLeetCodeData, fetchUserBadges, fetchUserContest, fetchRecentSubmissions } from './services/leetcodeApi';
 
 export default function App() {
-  // Check if this is a hard browser refresh (F5 / reload button)
   const isPageReload = window.performance.getEntriesByType("navigation")[0]?.type === "reload";
 
-  // If it's a hard reload, wipe sessionStorage so the app starts fresh
   if (isPageReload) {
     sessionStorage.clear();
   }
 
+  const [darkMode, setDarkMode] = useState(true);
   const [username, setUsername] = useState(() => sessionStorage.getItem('lc_app_username') || '');
   const [userData, setUserData] = useState(() => {
     const saved = sessionStorage.getItem('lc_app_userdata');
@@ -34,7 +34,10 @@ export default function App() {
     return saved ? JSON.parse(saved) : null;
   });
 
-  // Keep sessionStorage updated during route navigation
+  useEffect(() => {
+    document.body.className = darkMode ? 'bg-dark text-light' : 'bg-light text-dark';
+  }, [darkMode]);
+
   useEffect(() => {
     sessionStorage.setItem('lc_app_username', username);
     if (userData) sessionStorage.setItem('lc_app_userdata', JSON.stringify(userData));
@@ -98,36 +101,47 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark mb-4 px-4">
-        <span className="navbar-brand">LeetCode Explorer</span>
-        <div className="navbar-nav">
-          <Link className="nav-link" to="/">Dashboard</Link>
-          <Link className="nav-link" to="/practice">Goals</Link>
-          <Link className="nav-link" to="/compare">Compare Users</Link>
-        </div>
-      </nav>
+      <div className={`min-vh-100 ${darkMode ? 'bg-dark text-light' : 'bg-light text-dark'}`}>
+        <nav className={`navbar navbar-expand-lg ${darkMode ? 'navbar-dark bg-dark border-bottom border-secondary' : 'navbar-light bg-white border-bottom'} px-4 mb-4`}>
+          <span className="navbar-brand fw-bold">Lead-your-leet!</span>
+          <div className="collapse navbar-collapse">
+            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+              <li className="nav-item">
+                <Link className="nav-link" to="/">Dashboard</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/practice">Goals</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/compare">Compare Users</Link>
+              </li>
+            </ul>
+            <ThemeToggle darkMode={darkMode} setDarkMode={setDarkMode} />
+          </div>
+        </nav>
 
-      <div className="container">
-        <Routes>
-          <Route 
-            path="/" 
-            element={
-              <Dashboard 
-                username={username}
-                setUsername={setUsername}
-                userData={userData}
-                badges={badges}
-                contestData={contestData}
-                submissions={submissions}
-                loading={loading}
-                error={error}
-                onSearch={handleSearch}
-              />
-            } 
-          />
-          <Route path="/practice" element={<GoalTracker />} />
-          <Route path="/compare" element={<ComparePage />} />
-        </Routes>
+        <div className="container">
+          <Routes>
+            <Route 
+              path="/" 
+              element={
+                <Dashboard 
+                  username={username}
+                  setUsername={setUsername}
+                  userData={userData}
+                  badges={badges}
+                  contestData={contestData}
+                  submissions={submissions}
+                  loading={loading}
+                  error={error}
+                  onSearch={handleSearch}
+                />
+              } 
+            />
+            <Route path="/practice" element={<GoalTracker />} />
+            <Route path="/compare" element={<ComparePage />} />
+          </Routes>
+        </div>
       </div>
     </BrowserRouter>
   );
