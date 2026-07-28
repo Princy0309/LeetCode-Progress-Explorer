@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import GoalTracker from './pages/GoalTracker';
 import ComparePage from './pages/ComparePage';
@@ -108,11 +109,14 @@ export default function App() {
     <BrowserRouter>
       <div className={`min-vh-100 ${darkMode ? 'bg-dark text-light' : 'bg-light text-dark'}`}>
         <nav className={`navbar navbar-expand-lg ${darkMode ? 'navbar-dark bg-dark border-bottom border-secondary' : 'navbar-light bg-white border-bottom'} px-4 mb-4`}>
-          <span className="navbar-brand fw-bold">Lead-your-leet!</span>
+          <Link className="navbar-brand fw-bold text-decoration-none" to="/">Lead-your-leet!</Link>
           <div className="collapse navbar-collapse">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
-                <Link className="nav-link" to="/">Dashboard</Link>
+                <Link className="nav-link" to="/">Home</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/dashboard">Dashboard</Link>
               </li>
               <li className="nav-item">
                 <Link className="nav-link" to="/practice">Goals</Link>
@@ -127,8 +131,9 @@ export default function App() {
 
         <div className="container">
           <Routes>
+            <Route path="/" element={<Home darkMode={darkMode} />} />
             <Route 
-              path="/" 
+              path="/dashboard" 
               element={
                 <Dashboard 
                   username={username}
