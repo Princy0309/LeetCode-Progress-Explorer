@@ -253,33 +253,3 @@ input::placeholder {
   box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.2);
 }
 
-/* Card Container Styles */
-.practice-goal-container .easy-card {
-  border-color: rgba(163, 230, 53, 0.4);
-  background: linear-gradient(135deg, rgba(163, 230, 53, 0.05), rgba(18, 20, 24, 0.8));
-  box-shadow: 0 10px 30px -10px rgba(163, 230, 53, 0.15);
-}
-.practice-goal-container .easy-card input:focus {
-  border-color: #a3e635;
-  box-shadow: 0 0 0 3px rgba(163, 230, 53, 0.2);
-}
-
-.practice-goal-container .medium-card {
-  border-color: rgba(251, 146, 60, 0.4);
-  background: linear-gradient(135deg, rgba(251, 146, 60, 0.05), rgba(18, 20, 24, 0.8));
-  box-shadow: 0 10px 30px -10px rgba(251, 146, 60, 0.15);
-}
-.practice-goal-container .medium-card input:focus {
-  border-color: #fb923c;
-  box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.2);
-}
-
-.practice-goal-container .hard-card {
-  border-color: rgba(251, 113, 133, 0.4);
-  background: linear-gradient(135deg, rgba(251, 113, 133, 0.05), rgba(18, 20, 24, 0.8));
-  box-shadow: 0 10px 30px -10px rgba(251, 113, 133, 0.15);
-}
-.practice-goal-container .hard-card input:focus {
-  border-color: #fb7185;
-  box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.2);
-}

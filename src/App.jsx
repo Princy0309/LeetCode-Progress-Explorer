@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import GoalTracker from './Pages/GoalTracker';
+import ComparePage from './Pages/ComparePage';
 
 export default function App() {
   return (
@@ -11,6 +12,7 @@ export default function App() {
         <div className="navbar-nav">
           <Link className="nav-link" to="/">Dashboard</Link>
           <Link className="nav-link" to="/practice">Problem Practice</Link>
+          <Link className="nav-link" to="/compare">Compare Users</Link>
         </div>
       </nav>
 
@@ -18,6 +20,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/practice" element={<GoalTracker />} />
+          <Route path='/compare' element={<ComparePage />} />
         </Routes>
       </div>
     </BrowserRouter>

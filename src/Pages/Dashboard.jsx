@@ -6,56 +6,27 @@ import { fetchUserBadges } from '../services/leetcodeApi';
 import Badges from '../components/Badges';
 import ContestStats from '../components/ContestStats';
 import { fetchUserContest } from '../services/leetcodeApi';
-import CompareUsers from '../components/CompareUsers';
 import VisualInsights from '../components/VisualInsights';
 import RecentSubmissions from '../components/RecentSubmissions';
 
-export default function App() {
-  const [username, setUsername] = useState(() => {
-    return localStorage.getItem('lc_search_username') || '';
-  });
-  const [userData, setUserData] = useState(() => {
-    const saved = localStorage.getItem('lc_user_data');
-    return saved ? JSON.parse(saved) : null;
-  });
+
+export default function Dashboard() {
+  const [username, setUsername] = useState('');
+  const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [badges, setBadges] = useState(() => {
-    const saved = localStorage.getItem('lc_badges');
-    return saved ? JSON.parse(saved) : null;
-  });
-  const [contestData, setContestData] = useState(() => {
-    const saved = localStorage.getItem('lc_contest_data');
-    return saved ? JSON.parse(saved) : null;
-  });
-  const [submissions, setSubmissions] = useState(() => {
-    const saved = localStorage.getItem('lc_submissions');
-    return saved ? JSON.parse(saved) : null;
-  });
+  const [badges, setBadges] = useState(null);
+  const [contestData, setContestData] = useState(null);
+  const [submissions, setSubmissions] = useState(null);
 
+  // Force clear browser cache/memory restore on load
   useEffect(() => {
-    localStorage.setItem('lc_search_username', username);
-  }, [username]);
-
-  useEffect(() => {
-    if (userData) localStorage.setItem('lc_user_data', JSON.stringify(userData));
-    else localStorage.removeItem('lc_user_data');
-  }, [userData]);
-
-  useEffect(() => {
-    if (badges) localStorage.setItem('lc_badges', JSON.stringify(badges));
-    else localStorage.removeItem('lc_badges');
-  }, [badges]);
-
-  useEffect(() => {
-    if (contestData) localStorage.setItem('lc_contest_data', JSON.stringify(contestData));
-    else localStorage.removeItem('lc_contest_data');
-  }, [contestData]);
-
-  useEffect(() => {
-    if (submissions) localStorage.setItem('lc_submissions', JSON.stringify(submissions));
-    else localStorage.removeItem('lc_submissions');
-  }, [submissions]);
+    setUsername('');
+    setUserData(null);
+    setBadges(null);
+    setContestData(null);
+    setSubmissions(null);
+  }, []);
 
   const handleSearch = async () => {
     if (!username.trim()) {
@@ -113,14 +84,12 @@ export default function App() {
         loading={loading}
       />
 
-      {/* Error Alert Message */}
       {error && (
         <div className="alert alert-danger text-center my-3" role="alert">
           {error}
         </div>
       )}
 
-      {/* Loading Spinner */}
       {loading && (
         <div className='text-center my-4'>
           <div className='spinner-border text-primary' role="status">
@@ -134,7 +103,7 @@ export default function App() {
       {badges && <Badges badges={badges} />}
       {contestData && <ContestStats contestData={contestData} />}
       {submissions && <RecentSubmissions submissions={submissions} />}
-      <CompareUsers />
+      
     </div>
   );
 }
