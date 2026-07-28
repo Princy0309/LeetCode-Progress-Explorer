@@ -91,7 +91,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark mb-4 px-4">
-        <span className="navbar-brand">LeetCode Explorer</span>
+        <span className="navbar-brand">Lead-your-leet!</span>
         <div className="navbar-nav">
           <Link className="nav-link" to="/">Dashboard</Link>
           <Link className="nav-link" to="/practice">Goals</Link>
