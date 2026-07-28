@@ -6,6 +6,14 @@ import ComparePage from './pages/ComparePage';
 import { fetchLeetCodeData, fetchUserBadges, fetchUserContest, fetchRecentSubmissions } from './services/leetcodeApi';
 
 export default function App() {
+  // Check if this is a hard browser refresh (F5 / reload button)
+  const isPageReload = window.performance.getEntriesByType("navigation")[0]?.type === "reload";
+
+  // If it's a hard reload, wipe sessionStorage so the app starts fresh
+  if (isPageReload) {
+    sessionStorage.clear();
+  }
+
   const [username, setUsername] = useState(() => sessionStorage.getItem('lc_app_username') || '');
   const [userData, setUserData] = useState(() => {
     const saved = sessionStorage.getItem('lc_app_userdata');
@@ -26,7 +34,7 @@ export default function App() {
     return saved ? JSON.parse(saved) : null;
   });
 
-  // Keep sessionStorage updated automatically
+  // Keep sessionStorage updated during route navigation
   useEffect(() => {
     sessionStorage.setItem('lc_app_username', username);
     if (userData) sessionStorage.setItem('lc_app_userdata', JSON.stringify(userData));
@@ -91,10 +99,10 @@ export default function App() {
   return (
     <BrowserRouter>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark mb-4 px-4">
-        <span className="navbar-brand">Lead-your-leet!</span>
+        <span className="navbar-brand">LeetCode Explorer</span>
         <div className="navbar-nav">
           <Link className="nav-link" to="/">Dashboard</Link>
-          <Link className="nav-link" to="/practice">Goals</Link>
+          <Link className="nav-link" to="/practice">Gaols</Link>
           <Link className="nav-link" to="/compare">Compare Users</Link>
         </div>
       </nav>
