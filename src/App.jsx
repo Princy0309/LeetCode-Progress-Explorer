@@ -108,28 +108,43 @@ export default function App() {
   return (
     <BrowserRouter>
       <div className={`min-vh-100 ${darkMode ? 'bg-dark text-light' : 'bg-light text-dark'}`}>
-        <nav className={`navbar navbar-expand-lg ${darkMode ? 'navbar-dark bg-dark border-bottom border-secondary' : 'navbar-light bg-white border-bottom'} px-4 mb-4`}>
-          <Link className="navbar-brand fw-bold text-decoration-none" to="/">Lead-your-leet!</Link>
-          <div className="collapse navbar-collapse">
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              <li className="nav-item">
-                <Link className="nav-link" to="/">Home</Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/dashboard">Dashboard</Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/practice">Goals</Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/compare">Compare Users</Link>
-              </li>
-            </ul>
-            <ThemeToggle darkMode={darkMode} setDarkMode={setDarkMode} />
+        <nav className={`navbar navbar-expand-lg ${darkMode ? 'navbar-dark bg-dark border-bottom border-secondary' : 'navbar-light bg-white border-bottom'} px-3 px-lg-4 mb-4`}>
+          <div className="container-fluid">
+            <Link className="navbar-brand fw-bold text-decoration-none" to="/">Lead-your-leet!</Link>
+            <button 
+              className="navbar-toggler" 
+              type="button" 
+              data-bs-toggle="collapse" 
+              data-bs-target="#navbarNav" 
+              aria-controls="navbarNav" 
+              aria-expanded="false" 
+              aria-label="Toggle navigation"
+            >
+              <span className="navbar-toggler-icon"></span>
+            </button>
+            <div className="collapse navbar-collapse" id="navbarNav">
+              <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                <li className="nav-item">
+                  <Link className="nav-link" to="/">Home</Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/dashboard">Dashboard</Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/practice">Goals</Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/compare">Compare Users</Link>
+                </li>
+              </ul>
+              <div className="d-flex mt-2 mt-lg-0">
+                <ThemeToggle darkMode={darkMode} setDarkMode={setDarkMode} />
+              </div>
+            </div>
           </div>
         </nav>
 
-        <div className="container">
+        <div className="container px-3 px-md-4">
           <Routes>
             <Route path="/" element={<Home darkMode={darkMode} />} />
             <Route 

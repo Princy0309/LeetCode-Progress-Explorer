@@ -47,12 +47,12 @@ export default function Home({ darkMode }) {
   }, [currentText, isDeleting, sentenceIndex, typingSpeed]);
 
   return (
-    <div className="container d-flex flex-column justify-content-center align-items-center min-vh-75 text-center" style={{ marginTop: '15vh' }}>
-      <h1 className="display-4 fw-bold mb-4">Welcome to Lead-your-leet!</h1>
-      <div className="p-5 rounded shadow-lg w-75" style={{ background: darkMode ? '#1e1e1e' : '#f8f9fa', minHeight: '150px' }}>
-        <p className="fs-3 font-monospace mb-0">
+    <div className="container d-flex flex-column justify-content-center align-items-center min-vh-75 text-center px-3 py-5" style={{ marginTop: '10vh' }}>
+      <h1 className="display-5 fw-bold mb-4 text-break">Welcome to Lead-your-leet!</h1>
+      <div className="p-4 p-md-5 rounded shadow-lg w-100" style={{ maxWidth: '800px', background: darkMode ? '#1e1e1e' : '#f8f9fa', minHeight: '160px' }}>
+        <p className="fs-4 font-monospace mb-0 text-break">
           {currentText}
-          <span className="spinner-grow spinner-grow-sm ms-1" role="status" aria-hidden="true"></span>
+          <span className="spinner-grow spinner-grow-sm ms-1 align-middle" role="status" aria-hidden="true"></span>
         </p>
       </div>
     </div>
