@@ -11,7 +11,7 @@ export default function App() {
         <span className="navbar-brand">LeetCode Explorer</span>
         <div className="navbar-nav">
           <Link className="nav-link" to="/">Dashboard</Link>
-          <Link className="nav-link" to="/practice">Problem Practice</Link>
+          <Link className="nav-link" to="/practice">Goals</Link>
           <Link className="nav-link" to="/compare">Compare Users</Link>
         </div>
       </nav>
