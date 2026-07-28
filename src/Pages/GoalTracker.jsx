@@ -1,97 +1,185 @@
 import React, { useState, useEffect } from 'react';
 
 export default function GoalTracker() {
-  const [goals, setGoals] = useState(() => {
-    const saved = localStorage.getItem('lc_practice_goals');
-    return saved ? JSON.parse(saved) : { easy: 100, medium: 150, hard: 50 };
+  const [viewMode, setViewMode] = useState('weekly');
+
+  const [weeklyGoals, setWeeklyGoals] = useState(() => {
+    const saved = sessionStorage.getItem('lc_weekly_goals');
+    return saved ? JSON.parse(saved) : { easy: '', medium: '', hard: '' };
   });
 
-  const [current, setCurrent] = useState(() => {
-    const saved = localStorage.getItem('lc_practice_current');
-    return saved ? JSON.parse(saved) : { easy: 0, medium: 0, hard: 0 };
+  const [monthlyGoals, setMonthlyGoals] = useState(() => {
+    const saved = sessionStorage.getItem('lc_monthly_goals');
+    return saved ? JSON.parse(saved) : { easy: '', medium: '', hard: '' };
+  });
+
+  const [completed, setCompleted] = useState(() => {
+    const saved = sessionStorage.getItem('lc_goal_completed');
+    return saved ? JSON.parse(saved) : { 
+      weekly: { easy: 0, medium: 0, hard: 0 }, 
+      monthly: { easy: 0, medium: 0, hard: 0 } 
+    };
   });
 
   useEffect(() => {
-    localStorage.setItem('lc_practice_goals', JSON.stringify(goals));
-  }, [goals]);
+    sessionStorage.setItem('lc_weekly_goals', JSON.stringify(weeklyGoals));
+  }, [weeklyGoals]);
 
   useEffect(() => {
-    localStorage.setItem('lc_practice_current', JSON.stringify(current));
-  }, [current]);
+    sessionStorage.setItem('lc_monthly_goals', JSON.stringify(monthlyGoals));
+  }, [monthlyGoals]);
 
-  const handleChange = (tier, field, value) => {
-    const val = Math.max(0, parseInt(value) || 0);
-    if (field === 'goal') {
-      setGoals(prev => ({ ...prev, [tier]: val }));
+  useEffect(() => {
+    sessionStorage.setItem('lc_goal_completed', JSON.stringify(completed));
+  }, [completed]);
+
+  const currentGoals = viewMode === 'weekly' ? weeklyGoals : monthlyGoals;
+  const currentCompleted = viewMode === 'weekly' ? completed.weekly : completed.monthly;
+
+  const handleGoalChange = (tier, value) => {
+    const val = value === '' ? '' : Math.max(0, parseInt(value) || 0);
+    if (viewMode === 'weekly') {
+      setWeeklyGoals(prev => ({ ...prev, [tier]: val }));
     } else {
-      setCurrent(prev => ({ ...prev, [tier]: val }));
+      setMonthlyGoals(prev => ({ ...prev, [tier]: val }));
     }
   };
 
-  const calculateProgress = (curr, goal) => {
-    if (!goal || goal === 0) return 0;
-    return Math.min(100, Math.round((curr / goal) * 100));
+  const handleIncrement = (tier) => {
+    if (viewMode === 'weekly') {
+      setCompleted(prev => ({
+        ...prev,
+        weekly: { ...prev.weekly, [tier]: prev.weekly[tier] + 1 }
+      }));
+    } else {
+      setCompleted(prev => ({
+        ...prev,
+        monthly: { ...prev.monthly, [tier]: prev.monthly[tier] + 1 }
+      }));
+    }
   };
 
-  const tiers = [
-    { key: 'easy', label: 'Easy Tier', color: '#00e676' },
-    { key: 'medium', label: 'Medium Tier', color: '#ff9800' },
-    { key: 'hard', label: 'Hard Tier', color: '#ff5722' }
-  ];
+  const calculatePercentage = (comp, goal) => {
+    const numGoal = parseInt(goal);
+    if (!numGoal || numGoal === 0) return 0;
+    return Math.min(100, Math.round((comp / numGoal) * 100));
+  };
+
+  const getCircleStyle = (percent, color) => {
+    const degrees = (percent / 100) * 360;
+    return {
+      background: `conic-gradient(${color} ${degrees}deg, rgba(255, 255, 255, 0.1) 0deg)`
+    };
+  };
 
   return (
-    <div className="container mt-4">
-      <div className="p-4" style={{ background: 'var(--bg-surface)', borderRadius: '16px', border: '1px solid var(--border-subtle)', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)' }}>
-        <h2 className="mb-4 text-center" style={{ fontWeight: '700', letterSpacing: '0.5px' }}>Practice Goal Tracker</h2>
-        <div className="row g-4">
-          {tiers.map(tier => {
-            const progress = calculateProgress(current[tier.key], goals[tier.key]);
-            return (
-              <div className="col-md-4" key={tier.key}>
-                <div className="p-3 h-100 d-flex flex-column justify-content-between" style={{ background: 'rgba(255, 255, 255, 0.02)', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
-                  <div>
-                    <h5 style={{ color: tier.color, fontWeight: '600' }}>{tier.label}</h5>
-                    <div className="mb-3">
-                      <label className="form-label text-muted small">Target Goal</label>
-                      <input 
-                        type="number" 
-                        className="form-control bg-dark text-light border-secondary"
-                        value={goals[tier.key]}
-                        onChange={(e) => handleChange(tier.key, 'goal', e.target.value)}
-                      />
-                    </div>
-                    <div className="mb-3">
-                      <label className="form-label text-muted small">Completed</label>
-                      <input 
-                        type="number" 
-                        className="form-control bg-dark text-light border-secondary"
-                        value={current[tier.key]}
-                        onChange={(e) => handleChange(tier.key, 'current', e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="d-flex justify-content-between mb-1 small text-muted">
-                      <span>Progress</span>
-                      <span>{progress}%</span>
-                    </div>
-                    <div className="progress" style={{ height: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px' }}>
-                      <div 
-                        className="progress-bar" 
-                        role="progressbar" 
-                        style={{ width: `${progress}%`, backgroundColor: tier.color, borderRadius: '4px', transition: 'width 0.4s ease' }} 
-                        aria-valuenow={progress} 
-                        aria-valuemin="0" 
-                        aria-valuemax="100"
-                      ></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+    <div className="container mt-5 text-light">
+      <h1 className="text-center mb-4">Make goals and track them!</h1>
+
+      <div className="d-flex justify-content-center mb-4">
+        <div className="btn-group" role="group">
+          <button
+            type="button"
+            className={`btn ${viewMode === 'weekly' ? 'btn-primary' : 'btn-outline-secondary'}`}
+            onClick={() => setViewMode('weekly')}
+          >
+            Weekly Goals
+          </button>
+          <button
+            type="button"
+            className={`btn ${viewMode === 'monthly' ? 'btn-primary' : 'btn-outline-secondary'}`}
+            onClick={() => setViewMode('monthly')}
+          >
+            Monthly Goals ({new Date().toLocaleString('default', { month: 'long' })})
+          </button>
         </div>
       </div>
+
+      <div className="row g-4">
+        <TierCard
+          title="Easy Tier"
+          headerColor="text-success"
+          ringColor="#198754"
+          goal={currentGoals.easy}
+          completed={currentCompleted.easy}
+          percentage={calculatePercentage(currentCompleted.easy, currentGoals.easy)}
+          onGoalChange={(val) => handleGoalChange('easy', val)}
+          onIncrement={() => handleIncrement('easy')}
+          circleStyle={getCircleStyle(calculatePercentage(currentCompleted.easy, currentGoals.easy), '#198754')}
+        />
+
+        <TierCard
+          title="Medium Tier"
+          headerColor="text-warning"
+          ringColor="#ffc107"
+          goal={currentGoals.medium}
+          completed={currentCompleted.medium}
+          percentage={calculatePercentage(currentCompleted.medium, currentGoals.medium)}
+          onGoalChange={(val) => handleGoalChange('medium', val)}
+          onIncrement={() => handleIncrement('medium')}
+          circleStyle={getCircleStyle(calculatePercentage(currentCompleted.medium, currentGoals.medium), '#ffc107')}
+        />
+
+        <TierCard
+          title="Hard Tier"
+          headerColor="text-danger"
+          ringColor="#dc3545"
+          goal={currentGoals.hard}
+          completed={currentCompleted.hard}
+          percentage={calculatePercentage(currentCompleted.hard, currentGoals.hard)}
+          onGoalChange={(val) => handleGoalChange('hard', val)}
+          onIncrement={() => handleIncrement('hard')}
+          circleStyle={getCircleStyle(calculatePercentage(currentCompleted.hard, currentGoals.hard), '#dc3545')}
+        />
+      </div>
+    </div>
+  );
+}
+
+function TierCard({ title, headerColor, goal, completed, percentage, onGoalChange, onIncrement, circleStyle }) {
+  const displayGoal = goal === '' ? '--' : goal;
+
+  return (
+    <div className="col-md-4">
+      <div className="card bg-dark border-secondary shadow-sm p-4 text-light h-100 d-flex flex-column align-items-center">
+        <h3 className={`mb-3 ${headerColor}`}>{title}</h3>
+
+        <div className="circular-progress my-3 d-flex align-items-center justify-content-center" style={circleStyle}>
+          <div className="inner-circle bg-dark d-flex flex-column align-items-center justify-content-center rounded-circle">
+            <span className="fs-3 fw-bold">{percentage}%</span>
+            <small className="text-muted">{completed} / {displayGoal}</small>
+          </div>
+        </div>
+
+        <div className="w-100 mt-3">
+          <label className="form-label text-muted small">Target Goal:</label>
+          <input
+            type="number"
+            className="form-control bg-secondary text-light border-0 mb-3"
+            value={goal}
+            placeholder="--"
+            onChange={(e) => onGoalChange(e.target.value)}
+          />
+
+          <div className="d-flex justify-content-between align-items-center mb-2">
+            <span className="text-muted small">Completed: <strong>{completed}</strong></span>
+            <button className="btn btn-sm btn-outline-light" onClick={onIncrement}>+ Add Solved</button>
+          </div>
+        </div>
+      </div>
+
+      <style>{`
+        .circular-progress {
+          width: 140px;
+          height: 140px;
+          border-radius: 50%;
+          position: relative;
+        }
+        .inner-circle {
+          width: 115px;
+          height: 115px;
+        }
+      `}</style>
     </div>
   );
 }
