@@ -776,3 +776,260 @@ body.bg-light .submissions-card:hover {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0; }
 }
+
+/* ==========================================
+   PRACTICE RECOMMENDATIONS CARD
+   ========================================== */
+
+.rec-card {
+  border-radius: 1rem;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.35s ease;
+  will-change: transform;
+}
+
+.rec-card:hover {
+  transform: translateY(-14px);
+}
+
+body.bg-dark .rec-card:hover {
+  box-shadow: 0 24px 52px rgba(0, 0, 0, 0.65),
+              0 0 0 1px rgba(255, 87, 34, 0.2) !important;
+}
+
+body.bg-light .rec-card:hover {
+  box-shadow: 0 24px 52px rgba(0, 0, 0, 0.12) !important;
+}
+
+.dashboard-card-wrap:has(.rec-card):hover {
+  /* inner card owns the lift */
+}
+
+.rec-header-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.rec-title {
+  font-size: 1.15rem;
+  letter-spacing: -0.01em;
+}
+
+.rec-skill-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid;
+  background: transparent;
+  white-space: nowrap;
+}
+
+.rec-summary {
+  font-size: 0.88rem;
+  opacity: 0.8;
+  line-height: 1.6;
+  border-left: 3px solid var(--fire-orange);
+  padding-left: 0.75rem;
+}
+
+/* ── Bucket ── */
+.rec-buckets {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.rec-bucket-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  background: none;
+  border: none;
+  border-radius: 0.6rem;
+  padding: 0.65rem 0.85rem;
+  cursor: pointer;
+  text-align: left;
+  border-left: 3px solid var(--bucket-accent);
+  transition: background 0.2s ease;
+}
+
+body.bg-dark .rec-bucket-header {
+  background: rgba(255,255,255,0.03);
+  color: var(--text-main);
+}
+
+body.bg-light .rec-bucket-header {
+  background: rgba(0,0,0,0.03);
+  color: #212529;
+}
+
+.rec-bucket-header:hover {
+  background: rgba(128,128,128,0.08) !important;
+}
+
+.rec-bucket-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.rec-bucket-title {
+  font-weight: 700;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.rec-bucket-desc {
+  font-size: 0.75rem;
+  opacity: 0.55;
+  flex: 1;
+}
+
+.rec-bucket-count {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(128,128,128,0.15);
+  flex-shrink: 0;
+}
+
+.rec-bucket-chevron {
+  font-size: 0.65rem;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+/* ── Tag grid ── */
+.rec-tag-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.65rem;
+  padding: 0.75rem 0.25rem 0.25rem;
+}
+
+/* ── Tag card ── */
+.rec-tag-card {
+  position: relative;
+  border-radius: 0.7rem;
+  overflow: hidden;
+  border: 1px solid rgba(128,128,128,0.15);
+  text-decoration: none !important;
+  display: block;
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.22s ease,
+              border-color 0.22s ease;
+}
+
+.rec-tag-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--tag-accent) !important;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+/* Translucent fill bar at the bottom showing progress */
+.rec-tag-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: var(--tag-accent);
+  border-radius: 0 0 0.7rem 0.7rem;
+  transition: width 0.6s ease;
+}
+
+.rec-tag-inner {
+  padding: 0.65rem 0.7rem 0.75rem;
+}
+
+.rec-tag-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+body.bg-dark .rec-tag-name  { color: var(--text-main); }
+body.bg-light .rec-tag-name { color: #212529; }
+
+.rec-tag-tier-badge {
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid;
+  border-radius: 999px;
+  padding: 0.1rem 0.45rem;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.rec-tag-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  opacity: 0.55;
+  margin-top: 0.35rem;
+  margin-bottom: 0.4rem;
+}
+
+.rec-tag-pct {
+  font-weight: 600;
+}
+
+/* Mini block track */
+.rec-tag-track {
+  display: flex;
+  gap: 2px;
+}
+
+.rec-tag-block {
+  height: 4px;
+  flex: 1;
+  border-radius: 1px;
+  transition: background-color 0.3s ease;
+}
+
+/* Dark mode card bg */
+body.bg-dark .rec-tag-card {
+  background: var(--bg-surface-hover) !important;
+}
+
+body.bg-light .rec-tag-card {
+  background: rgba(255,255,255,0.85) !important;
+}
+
+.rec-footer {
+  font-size: 0.72rem;
+  opacity: 0.4;
+  text-align: right;
+}
+
+/* ==========================================
+   NAVBAR ACTIVE LINK
+   ========================================== */
+
+/* React Router adds .active to the matching NavLink */
+.navbar .nav-link.active {
+  color: var(--fire-orange) !important;
+  font-weight: 600;
+  position: relative;
+}
+
+/* Underline indicator */
+.navbar .nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0.5rem;
+  right: 0.5rem;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--fire-orange-gradient);
+}
+
+/* Hover on inactive links */
+.navbar .nav-link:not(.active):hover {
+  color: var(--fire-orange) !important;
+  opacity: 0.85;
+}

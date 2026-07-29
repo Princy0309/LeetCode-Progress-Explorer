@@ -220,3 +220,53 @@ export async function fetchSubmissionCalendar(username) {
     return null;
   }
 }
+
+export async function fetchUserTagStats(username) {
+  const query = `
+    query userTagStats($username: String!) {
+      matchedUser(username: $username) {
+        tagProblemCounts {
+          advanced {
+            tagName
+            tagSlug
+            problemsSolved
+          }
+          intermediate {
+            tagName
+            tagSlug
+            problemsSolved
+          }
+          fundamental {
+            tagName
+            tagSlug
+            problemsSolved
+          }
+        }
+      }
+    }
+  `;
+
+  try {
+    const response = await fetch(`${CORS_PROXY}${LEETCODE_GRAPHQL}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query, variables: { username } }),
+    });
+
+    const json = await response.json();
+    const tagData = json.data?.matchedUser?.tagProblemCounts;
+    if (!tagData) return null;
+
+    // Flatten all three tiers into one list, keeping tier info
+    const allTags = [
+      ...tagData.fundamental.map(t => ({ ...t, tier: 'fundamental' })),
+      ...tagData.intermediate.map(t => ({ ...t, tier: 'intermediate' })),
+      ...tagData.advanced.map(t => ({ ...t, tier: 'advanced' })),
+    ];
+
+    return allTags;
+  } catch (error) {
+    console.error("Error fetching tag stats:", error);
+    return null;
+  }
+}

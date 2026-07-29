@@ -6,6 +6,7 @@ import ContestStats from '../components/ContestStats';
 import VisualInsights from '../components/VisualInsights';
 import RecentSubmissions from '../components/RecentSubmissions';
 import StreakCard from '../components/StreakCard';
+import PracticeRecommendations from '../components/PracticeRecommendations';
 
 /**
  * Watches the feed container for any .dashboard-card-wrap elements —

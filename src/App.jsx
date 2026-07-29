@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, NavLink } from 'react-router-dom';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import GoalTracker from './pages/GoalTracker';
 import ComparePage from './pages/ComparePage';
 import ThemeToggle from './components/themeToggle';
-import { fetchLeetCodeData, fetchUserBadges, fetchUserContest, fetchRecentSubmissions, fetchSubmissionCalendar } from './services/leetcodeApi';
+import { fetchLeetCodeData, fetchUserBadges, fetchUserContest, fetchRecentSubmissions, fetchSubmissionCalendar, fetchUserTagStats } from './services/leetcodeApi';
 
 export default function App() {
   const isPageReload = window.performance.getEntriesByType("navigation")[0]?.type === "reload";
@@ -42,6 +42,10 @@ export default function App() {
     const saved = sessionStorage.getItem('lc_app_streak');
     return saved ? JSON.parse(saved) : null;
   });
+  const [tagStats, setTagStats] = useState(() => {
+    const saved = sessionStorage.getItem('lc_app_tags');
+    return saved ? JSON.parse(saved) : null;
+  });
 
   useEffect(() => {
     localStorage.setItem('lc_app_dark_mode', JSON.stringify(darkMode));
@@ -64,7 +68,10 @@ export default function App() {
 
     if (streakData) sessionStorage.setItem('lc_app_streak', JSON.stringify(streakData));
     else sessionStorage.removeItem('lc_app_streak');
-  }, [username, userData, badges, contestData, submissions, streakData]);
+
+    if (tagStats) sessionStorage.setItem('lc_app_tags', JSON.stringify(tagStats));
+    else sessionStorage.removeItem('lc_app_tags');
+  }, [username, userData, badges, contestData, submissions, streakData, tagStats]);
 
   const handleSearch = async (searchUsername) => {
     const targetUser = searchUsername || username;
@@ -80,21 +87,24 @@ export default function App() {
     setContestData(null);
     setSubmissions(null);
     setStreakData(null);
+    setTagStats(null);
 
     try {
-      const [solvedData, badgeData, contestRes, submissionRes, streakRes] = await Promise.allSettled([
+      const [solvedData, badgeData, contestRes, submissionRes, streakRes, tagRes] = await Promise.allSettled([
         fetchLeetCodeData(targetUser), 
         fetchUserBadges(targetUser), 
         fetchUserContest(targetUser), 
         fetchRecentSubmissions(targetUser),
         fetchSubmissionCalendar(targetUser),
+        fetchUserTagStats(targetUser),
       ]);
 
-      const solved = solvedData.status === 'fulfilled' ? solvedData.value : null;
-      const badgesVal = badgeData.status === 'fulfilled' ? badgeData.value : null;
-      const contestVal = contestRes.status === 'fulfilled' ? contestRes.value : null;
+      const solved      = solvedData.status    === 'fulfilled' ? solvedData.value    : null;
+      const badgesVal   = badgeData.status     === 'fulfilled' ? badgeData.value     : null;
+      const contestVal  = contestRes.status    === 'fulfilled' ? contestRes.value    : null;
       const submissionVal = submissionRes.status === 'fulfilled' ? submissionRes.value : null;
-      const streakVal = streakRes.status === 'fulfilled' ? streakRes.value : null;
+      const streakVal   = streakRes.status     === 'fulfilled' ? streakRes.value     : null;
+      const tagVal      = tagRes.status        === 'fulfilled' ? tagRes.value        : null;
 
       if (!solved) {
         throw new Error("User not found.");
@@ -105,6 +115,7 @@ export default function App() {
       setContestData(contestVal);
       setSubmissions(submissionVal);
       setStreakData(streakVal);
+      setTagStats(tagVal);
     } catch (err) {
       setError(err.message || "Failed to fetch user data. Please try again.");
       setUserData(null);
@@ -112,6 +123,7 @@ export default function App() {
       setContestData(null);
       setSubmissions(null);
       setStreakData(null);
+      setTagStats(null);
     } finally {
       setLoading(false);
     }
@@ -137,13 +149,13 @@ export default function App() {
             <div className="collapse navbar-collapse" id="navbarNav">
               <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                 <li className="nav-item">
-                  <Link className="nav-link" to="/dashboard">Dashboard</Link>
+                  <NavLink className="nav-link" to="/dashboard">Dashboard</NavLink>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/practice">Goals</Link>
+                  <NavLink className="nav-link" to="/practice">Goals</NavLink>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/compare">Compare Users</Link>
+                  <NavLink className="nav-link" to="/compare">Compare Users</NavLink>
                 </li>
               </ul>
               <div className="d-flex mt-2 mt-lg-0">
@@ -167,6 +179,7 @@ export default function App() {
                   contestData={contestData}
                   submissions={submissions}
                   streakData={streakData}
+                  tagStats={tagStats}
                   loading={loading}
                   error={error}
                   onSearch={handleSearch}
