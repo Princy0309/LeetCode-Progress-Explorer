@@ -136,3 +136,87 @@ export async function fetchRecentSubmissions(username) {
     return [];
   }
 }
+
+export async function fetchSubmissionCalendar(username) {
+  const query = `
+    query userCalendar($username: String!) {
+      matchedUser(username: $username) {
+        userCalendar {
+          submissionCalendar
+          totalActiveDays
+          streak
+        }
+      }
+    }
+  `;
+
+  try {
+    const response = await fetch(`${CORS_PROXY}${LEETCODE_GRAPHQL}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query, variables: { username } }),
+    });
+
+    const json = await response.json();
+    const calendar = json.data?.matchedUser?.userCalendar;
+
+    if (!calendar) return null;
+
+    // submissionCalendar is a JSON string: { "unixTimestamp": count, ... }
+    const rawMap = JSON.parse(calendar.submissionCalendar || "{}");
+
+    // Convert to a Map keyed by YYYY-MM-DD for easy lookup
+    const dayMap = {};
+    for (const [ts, count] of Object.entries(rawMap)) {
+      const dateKey = new Date(Number(ts) * 1000).toISOString().slice(0, 10);
+      dayMap[dateKey] = (dayMap[dateKey] || 0) + count;
+    }
+
+    // Compute current streak and longest streak from the day map
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const toKey = (d) => d.toISOString().slice(0, 10);
+
+    // Current streak: walk backwards from today (or yesterday if today has no submission yet)
+    let currentStreak = 0;
+    const cursor = new Date(today);
+    // If today has no submission, still allow streak to count if yesterday had one
+    if (!dayMap[toKey(cursor)]) cursor.setDate(cursor.getDate() - 1);
+    while (dayMap[toKey(cursor)]) {
+      currentStreak++;
+      cursor.setDate(cursor.getDate() - 1);
+    }
+
+    // Longest streak: iterate over sorted day keys
+    const sortedDays = Object.keys(dayMap).sort();
+    let longest = 0;
+    let run = 0;
+    let prevDate = null;
+    for (const key of sortedDays) {
+      const d = new Date(key);
+      if (prevDate) {
+        const diff = (d - prevDate) / (1000 * 60 * 60 * 24);
+        if (diff === 1) {
+          run++;
+        } else {
+          run = 1;
+        }
+      } else {
+        run = 1;
+      }
+      if (run > longest) longest = run;
+      prevDate = d;
+    }
+
+    return {
+      currentStreak,
+      longestStreak: Math.max(longest, calendar.streak || 0),
+      totalActiveDays: calendar.totalActiveDays || Object.keys(dayMap).length,
+      dayMap,
+    };
+  } catch (error) {
+    console.error("Error fetching submission calendar:", error);
+    return null;
+  }
+}

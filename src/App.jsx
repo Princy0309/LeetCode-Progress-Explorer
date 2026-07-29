@@ -5,7 +5,7 @@ import Dashboard from './pages/Dashboard';
 import GoalTracker from './pages/GoalTracker';
 import ComparePage from './pages/ComparePage';
 import ThemeToggle from './components/themeToggle';
-import { fetchLeetCodeData, fetchUserBadges, fetchUserContest, fetchRecentSubmissions } from './services/leetcodeApi';
+import { fetchLeetCodeData, fetchUserBadges, fetchUserContest, fetchRecentSubmissions, fetchSubmissionCalendar } from './services/leetcodeApi';
 
 export default function App() {
   const isPageReload = window.performance.getEntriesByType("navigation")[0]?.type === "reload";
@@ -38,6 +38,10 @@ export default function App() {
     const saved = sessionStorage.getItem('lc_app_submissions');
     return saved ? JSON.parse(saved) : null;
   });
+  const [streakData, setStreakData] = useState(() => {
+    const saved = sessionStorage.getItem('lc_app_streak');
+    return saved ? JSON.parse(saved) : null;
+  });
 
   useEffect(() => {
     localStorage.setItem('lc_app_dark_mode', JSON.stringify(darkMode));
@@ -57,7 +61,10 @@ export default function App() {
 
     if (submissions) sessionStorage.setItem('lc_app_submissions', JSON.stringify(submissions));
     else sessionStorage.removeItem('lc_app_submissions');
-  }, [username, userData, badges, contestData, submissions]);
+
+    if (streakData) sessionStorage.setItem('lc_app_streak', JSON.stringify(streakData));
+    else sessionStorage.removeItem('lc_app_streak');
+  }, [username, userData, badges, contestData, submissions, streakData]);
 
   const handleSearch = async (searchUsername) => {
     const targetUser = searchUsername || username;
@@ -72,19 +79,22 @@ export default function App() {
     setBadges(null);
     setContestData(null);
     setSubmissions(null);
+    setStreakData(null);
 
     try {
-      const [solvedData, badgeData, contestRes, submissionRes] = await Promise.allSettled([
+      const [solvedData, badgeData, contestRes, submissionRes, streakRes] = await Promise.allSettled([
         fetchLeetCodeData(targetUser), 
         fetchUserBadges(targetUser), 
         fetchUserContest(targetUser), 
-        fetchRecentSubmissions(targetUser)
+        fetchRecentSubmissions(targetUser),
+        fetchSubmissionCalendar(targetUser),
       ]);
 
       const solved = solvedData.status === 'fulfilled' ? solvedData.value : null;
       const badgesVal = badgeData.status === 'fulfilled' ? badgeData.value : null;
       const contestVal = contestRes.status === 'fulfilled' ? contestRes.value : null;
       const submissionVal = submissionRes.status === 'fulfilled' ? submissionRes.value : null;
+      const streakVal = streakRes.status === 'fulfilled' ? streakRes.value : null;
 
       if (!solved) {
         throw new Error("User not found.");
@@ -94,12 +104,14 @@ export default function App() {
       setBadges(badgesVal);
       setContestData(contestVal);
       setSubmissions(submissionVal);
+      setStreakData(streakVal);
     } catch (err) {
       setError(err.message || "Failed to fetch user data. Please try again.");
       setUserData(null);
       setBadges(null);
       setContestData(null);
       setSubmissions(null);
+      setStreakData(null);
     } finally {
       setLoading(false);
     }
@@ -157,6 +169,7 @@ export default function App() {
                   badges={badges}
                   contestData={contestData}
                   submissions={submissions}
+                  streakData={streakData}
                   loading={loading}
                   error={error}
                   onSearch={handleSearch}

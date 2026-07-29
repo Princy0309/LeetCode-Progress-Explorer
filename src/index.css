@@ -94,7 +94,7 @@ body.bg-dark .list-group-item:hover {
 body.bg-dark .card .card, 
 body.bg-dark .card .card-body, 
 body.bg-dark .card .list-group-item, 
-body.bg-dark div[class*="shadow"] div {
+body.bg-dark div[class*="shadow"] div:not([class*="heatmap"]):not([class*="streak"]):not(.row):not(.col):not(.col-4) {
   background-color: var(--bg-surface-hover) !important;
   color: var(--text-main) !important;
   border-color: var(--border-subtle) !important;
@@ -209,4 +209,243 @@ body.bg-light h4,
 body.bg-light h5,
 body.bg-light h6 {
   color: #212529 !important;
+}
+
+
+/* ==========================================
+   STREAK CARD
+   ========================================== */
+.streak-card {
+  overflow: hidden;
+}
+
+.streak-flame {
+  font-size: 1.6rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 6px rgba(255, 87, 34, 0.6));
+}
+
+/* Stat boxes */
+.streak-stat-box {
+  border-radius: 0.75rem;
+  padding: 0.9rem 0.5rem;
+  text-align: center;
+  border: 1px solid rgba(128, 128, 128, 0.15);
+  transition: transform 0.2s ease;
+}
+
+.streak-stat-box:hover {
+  transform: translateY(-2px);
+}
+
+.streak-stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.streak-stat-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.65;
+}
+
+.streak-stat-unit {
+  font-size: 0.68rem;
+  opacity: 0.45;
+}
+
+/* Heatmap */
+.heatmap-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.heatmap-month-row {
+  display: grid;
+  gap: 3px;
+  margin-bottom: 4px;
+  padding-left: 0;
+}
+
+.heatmap-month-label {
+  font-size: 0.62rem;
+  opacity: 0.55;
+  white-space: nowrap;
+}
+
+.heatmap-grid {
+  display: grid;
+  grid-template-rows: repeat(7, 1fr);
+  gap: 3px;
+  min-width: max-content;
+}
+
+.heatmap-cell {
+  width: 13px;
+  height: 13px;
+  border-radius: 2px;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+  cursor: default;
+}
+
+.heatmap-cell:hover {
+  transform: scale(1.4);
+  opacity: 1 !important;
+  z-index: 2;
+}
+
+/* Intensity levels — use fire orange palette */
+.heatmap-cell-empty {
+  background-color: rgba(128, 128, 128, 0.12);
+}
+
+.heatmap-cell-low {
+  background-color: rgba(255, 87, 34, 0.25);
+}
+
+.heatmap-cell-mid {
+  background-color: rgba(255, 87, 34, 0.5);
+}
+
+.heatmap-cell-high {
+  background-color: rgba(255, 87, 34, 0.78);
+}
+
+.heatmap-cell-max {
+  background: var(--fire-orange-gradient);
+  box-shadow: 0 0 6px var(--fire-orange-glow);
+}
+
+/* Legend */
+.heatmap-legend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  justify-content: flex-end;
+}
+
+.heatmap-legend-cell {
+  width: 11px !important;
+  height: 11px !important;
+}
+
+.heatmap-legend-label {
+  font-size: 0.65rem;
+  opacity: 0.5;
+}
+
+/* Active streak badge */
+.streak-active-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(255, 87, 34, 0.12);
+  border: 1px solid rgba(255, 87, 34, 0.3);
+  color: var(--fire-orange);
+}
+
+.streak-flame-sm {
+  font-size: 1rem;
+  filter: drop-shadow(0 0 4px rgba(255, 87, 34, 0.5));
+}
+
+/* Dark mode extras for streak card */
+body.bg-dark .streak-stat-box {
+  background-color: var(--bg-surface-hover) !important;
+  border-color: var(--border-subtle) !important;
+}
+
+body.bg-dark .heatmap-wrapper {
+  background-color: rgba(255, 255, 255, 0.03);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem 0.6rem;
+}
+
+body.bg-dark .streak-active-badge {
+  color: #ff7043;
+}
+
+/* Re-assert heatmap cell colors — must come after the broad card/shadow div overrides */
+body.bg-dark .heatmap-cell-empty {
+  background-color: rgba(255, 255, 255, 0.07) !important;
+}
+
+body.bg-dark .heatmap-cell-low {
+  background-color: rgba(255, 87, 34, 0.28) !important;
+}
+
+body.bg-dark .heatmap-cell-mid {
+  background-color: rgba(255, 87, 34, 0.55) !important;
+}
+
+body.bg-dark .heatmap-cell-high {
+  background-color: rgba(255, 87, 34, 0.82) !important;
+}
+
+body.bg-dark .heatmap-cell-max {
+  background: var(--fire-orange-gradient) !important;
+  box-shadow: 0 0 8px var(--fire-orange-glow) !important;
+}
+
+/* Prevent the broad span override from killing badge text and flame */
+body.bg-dark .streak-active-badge span,
+body.bg-dark .streak-active-badge,
+body.bg-dark .streak-flame,
+body.bg-dark .streak-flame-sm {
+  color: #ff7043 !important;
+  -webkit-text-fill-color: #ff7043 !important;
+}
+
+/* Keep fire-gradient-text working inside dark mode cards */
+body.bg-dark .card .fire-gradient-text {
+  background: var(--fire-orange-gradient) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+}
+
+/* Stat value color in dark mode (non-gradient boxes) */
+body.bg-dark .streak-stat-value {
+  color: var(--text-main) !important;
+}
+
+body.bg-dark .streak-stat-label,
+body.bg-dark .streak-stat-unit {
+  color: var(--text-muted) !important;
+}
+
+body.bg-dark .heatmap-legend-label,
+body.bg-dark .heatmap-month-label {
+  color: var(--text-muted) !important;
+}
+
+/* Light mode extras */
+body.bg-light .streak-stat-box {
+  background-color: rgba(230, 232, 236, 0.75) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+body.bg-light .heatmap-wrapper {
+  background-color: rgba(220, 223, 228, 0.45);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem 0.6rem;
+}
+
+body.bg-light .heatmap-cell-empty {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+body.bg-light .streak-active-badge {
+  background: rgba(255, 87, 34, 0.1);
+  border-color: rgba(255, 87, 34, 0.35);
 }

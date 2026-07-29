@@ -5,6 +5,7 @@ import Badges from '../components/Badges';
 import ContestStats from '../components/ContestStats';
 import VisualInsights from '../components/VisualInsights';
 import RecentSubmissions from '../components/RecentSubmissions';
+import StreakCard from '../components/StreakCard';
 
 export default function Dashboard({
   username,
@@ -13,6 +14,7 @@ export default function Dashboard({
   badges,
   contestData,
   submissions,
+  streakData,
   loading,
   error,
   onSearch
@@ -43,6 +45,7 @@ export default function Dashboard({
       )}
       
       {!loading && userData && <UserProfile data={userData} />}
+      {streakData && <StreakCard streakData={streakData} />}
       {userData && <VisualInsights solved={userData} submissions={submissions} />}
       {badges && <Badges badges={badges} />}
       {contestData && <ContestStats contestData={contestData} />}
