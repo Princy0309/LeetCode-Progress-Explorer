@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 const sentences = [
   "search profiles of people across the world",
@@ -49,12 +50,15 @@ export default function Home({ darkMode }) {
   return (
     <div className="container d-flex flex-column justify-content-center align-items-center min-vh-75 text-center px-3 py-5" style={{ marginTop: '10vh' }}>
       <h1 className="display-5 fw-bold mb-4 text-break">Welcome to Lead-your-leet!</h1>
-      <div className="p-4 p-md-5 rounded shadow-lg w-100" style={{ maxWidth: '800px', background: darkMode ? '#1e1e1e' : '#f8f9fa', minHeight: '160px' }}>
+      <div className="p-4 p-md-5 rounded shadow-lg w-100 mb-4" style={{ maxWidth: '800px', background: darkMode ? '#1e1e1e' : '#f8f9fa', minHeight: '160px' }}>
         <p className="fs-4 font-monospace mb-0 text-break">
           {currentText}
           <span className="spinner-grow spinner-grow-sm ms-1 align-middle" role="status" aria-hidden="true"></span>
         </p>
       </div>
+      <Link to="/dashboard" className="btn fire-btn px-4 py-2 rounded-pill fs-5">
+        Get Started →
+      </Link>
     </div>
   );
 }
