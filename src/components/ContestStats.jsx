@@ -4,7 +4,7 @@ export default function ContestStats({ contestData }) {
   if (!contestData) return null;
 
   return (
-    <div className="card shadow-sm p-4 mb-4">
+    <div className="card shadow-sm p-4 contest-card">
       <h4 className="mb-3">Contest & Ranking Stats</h4>
       <div className="row text-center">
         <div className="col-md-4 mb-3">

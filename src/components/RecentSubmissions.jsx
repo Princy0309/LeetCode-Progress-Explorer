@@ -4,7 +4,7 @@ export default function RecentSubmissions({ submissions }) {
   if (!submissions || submissions.length === 0) return null;
 
   return (
-    <div className="card shadow-sm p-4 mb-4">
+    <div className="card shadow-sm p-4 submissions-card">
       <h4 className="mb-3">Recent Accepted Submissions</h4>
       <div className="list-group">
         {submissions.map((sub) => {

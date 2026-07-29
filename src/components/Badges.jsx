@@ -3,7 +3,7 @@ export default function Badges({ badges }) {
 
   if (!Array.isArray(badgeList) || badgeList.length === 0) {
     return (
-      <div className="card shadow-sm mt-4 p-4 text-center">
+      <div className="card shadow-sm p-4 text-center badges-card">
         <h4 className="mb-3">Badges</h4>
         <p className="text-muted mb-0">No badges found for this user.</p>
       </div>
@@ -11,7 +11,7 @@ export default function Badges({ badges }) {
   }
 
   return (
-    <div className="card shadow-sm mt-4 p-4">
+    <div className="card shadow-sm p-4 badges-card">
       <h4 className="mb-3">Badges ({badgeList.length})</h4>
       <div className="row">
         {badgeList.map((badge, index) => {

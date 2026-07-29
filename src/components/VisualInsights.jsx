@@ -51,7 +51,7 @@ export default function VisualInsights({ solved }) {
   };
 
   return (
-    <div className="card shadow-lg p-4 mb-4 rounded-4 fire-border">
+    <div className="card shadow-lg p-4 rounded-4 fire-border perf-matrix-card">
       <div className="d-flex align-items-center justify-content-between mb-4">
         <h4 className="m-0 fw-bold fire-gradient-text">Performance Matrix</h4>
         <span className="badge px-3 py-2 rounded-pill" style={{ backgroundColor: 'rgba(255,87,34,0.15)', color: '#ff5722', border: '1px solid rgba(255,87,34,0.3)' }}>

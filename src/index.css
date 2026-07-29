@@ -94,7 +94,7 @@ body.bg-dark .list-group-item:hover {
 body.bg-dark .card .card, 
 body.bg-dark .card .card-body, 
 body.bg-dark .card .list-group-item, 
-body.bg-dark div[class*="shadow"] div:not([class*="heatmap"]):not([class*="streak"]):not(.row):not(.col):not(.col-4) {
+body.bg-dark div[class*="shadow"] div:not([class*="heatmap"]):not([class*="streak"]):not([class*="lc-"]):not(.row):not(.col):not(.col-4) {
   background-color: var(--bg-surface-hover) !important;
   color: var(--text-main) !important;
   border-color: var(--border-subtle) !important;
@@ -217,6 +217,25 @@ body.bg-light h6 {
    ========================================== */
 .streak-card {
   overflow: hidden;
+  border-radius: 1rem;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.35s ease;
+  will-change: transform;
+  cursor: default;
+}
+
+/* Whole card lifts as one rectangle on hover */
+.streak-card:hover {
+  transform: translateY(-14px);
+}
+
+body.bg-dark .streak-card:hover {
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.65),
+              0 0 0 1px rgba(255, 87, 34, 0.2) !important;
+}
+
+body.bg-light .streak-card:hover {
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.1) !important;
 }
 
 .streak-flame {
@@ -235,7 +254,7 @@ body.bg-light h6 {
 }
 
 .streak-stat-box:hover {
-  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .streak-stat-value {
@@ -448,4 +467,294 @@ body.bg-light .heatmap-cell-empty {
 body.bg-light .streak-active-badge {
   background: rgba(255, 87, 34, 0.1);
   border-color: rgba(255, 87, 34, 0.35);
+}
+
+
+/* ==========================================
+   DASHBOARD FEED — CARD SPACING + SCROLL REVEAL
+   ========================================== */
+
+.dashboard-feed {
+  padding-bottom: 3rem;
+}
+
+.dashboard-card-wrap {
+  margin-bottom: 2rem;
+  border-radius: 1rem;
+  will-change: transform, opacity;
+}
+
+/* Scroll reveal: starting state — scaled down and shifted up slightly */
+.dashboard-card-wrap.reveal-hidden {
+  opacity: 0;
+  transform: scale(0.94) translateY(24px);
+  transition: opacity 0.6s cubic-bezier(0.22, 0.61, 0.36, 1),
+              transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+  pointer-events: none;
+}
+
+/* Scroll reveal: arrived — full size, in place */
+.dashboard-card-wrap.reveal-visible {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  transition: opacity 0.6s cubic-bezier(0.22, 0.61, 0.36, 1),
+              transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+  pointer-events: auto;
+}
+
+/* Stagger via data attribute set by JS so nth-child DOM position doesn't matter */
+.dashboard-card-wrap[data-reveal-index="0"] { transition-delay: 0ms; }
+.dashboard-card-wrap[data-reveal-index="1"] { transition-delay: 80ms; }
+.dashboard-card-wrap[data-reveal-index="2"] { transition-delay: 160ms; }
+.dashboard-card-wrap[data-reveal-index="3"] { transition-delay: 240ms; }
+.dashboard-card-wrap[data-reveal-index="4"] { transition-delay: 320ms; }
+.dashboard-card-wrap[data-reveal-index="5"] { transition-delay: 400ms; }
+
+/* Generic card hover glow (badges, contest, submissions) */
+body.bg-dark .dashboard-card-wrap:hover > .card {
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6),
+              0 0 0 1px rgba(255, 87, 34, 0.15) !important;
+}
+
+body.bg-light .dashboard-card-wrap:hover > .card {
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Cards that manage their own hover lift — wrapper stays neutral */
+.dashboard-card-wrap:has(.lc-progress-card):hover,
+.dashboard-card-wrap:has(.streak-card):hover,
+.dashboard-card-wrap:has(.perf-matrix-card):hover {
+  /* no wrapper transform — the inner card handles it */
+}
+
+/* ==========================================
+   LEETCODE PROGRESS CARD
+   ========================================== */
+
+.lc-progress-card {
+  border-radius: 1rem;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.35s ease;
+  will-change: transform;
+  cursor: default;
+}
+
+/* Whole card lifts vertically as one rectangle on hover */
+.lc-progress-card:hover {
+  transform: translateY(-14px);
+}
+
+body.bg-dark .lc-progress-card:hover {
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.65),
+              0 0 0 1px rgba(108, 140, 255, 0.2) !important;
+}
+
+body.bg-light .lc-progress-card:hover {
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.1) !important;
+}
+
+.lc-progress-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.lc-progress-title {
+  font-size: 1.15rem;
+  letter-spacing: -0.01em;
+}
+
+/* 4-column grid on md+, 2-column on small */
+.lc-progress-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.9rem;
+}
+
+@media (max-width: 575px) {
+  .lc-progress-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Individual stat tile */
+.lc-stat-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.1rem 0.75rem 0.9rem;
+  border-radius: 0.85rem;
+  background: var(--tile-bg);
+  border: 1px solid var(--tile-border);
+  overflow: hidden;
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.28s ease;
+  cursor: default;
+}
+
+/* Thin colour bar at top */
+.lc-stat-tile-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--tile-accent);
+  border-radius: 0.85rem 0.85rem 0 0;
+}
+
+/* Hover: grow vertically upward — whole card only, not individual tiles */
+.lc-stat-tile:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12),
+              0 0 0 1px var(--tile-border);
+}
+
+.lc-stat-tile-value {
+  font-size: 2.1rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--tile-accent);
+  margin-bottom: 0.35rem;
+  letter-spacing: -0.02em;
+}
+
+.lc-stat-tile-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.6;
+}
+
+/* Dark mode adjustments */
+body.bg-dark .lc-stat-tile {
+  background: var(--tile-bg) !important;
+  border-color: var(--tile-border) !important;
+}
+
+body.bg-dark .lc-stat-tile-label {
+  color: var(--text-muted) !important;
+}
+
+body.bg-dark .lc-stat-tile-value {
+  color: var(--tile-accent) !important;
+}
+
+/* Light mode adjustments */
+body.bg-light .lc-stat-tile {
+  background: var(--tile-bg) !important;
+  border-color: var(--tile-border) !important;
+}
+
+/* ==========================================
+   PERFORMANCE MATRIX CARD — WHOLE-CARD HOVER LIFT
+   ========================================== */
+
+.perf-matrix-card {
+  border-radius: 1rem;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.35s ease;
+  will-change: transform;
+  cursor: default;
+}
+
+.perf-matrix-card:hover {
+  transform: translateY(-14px);
+}
+
+body.bg-dark .perf-matrix-card:hover {
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.65),
+              0 0 0 1px rgba(255, 87, 34, 0.35) !important;
+}
+
+body.bg-light .perf-matrix-card:hover {
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* ==========================================
+   BADGES CARD — WHOLE-CARD HOVER LIFT
+   ========================================== */
+
+.badges-card {
+  border-radius: 1rem;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.35s ease;
+  will-change: transform;
+  cursor: default;
+}
+
+.badges-card:hover {
+  transform: translateY(-14px);
+}
+
+body.bg-dark .badges-card:hover {
+  box-shadow: 0 24px 52px rgba(0, 0, 0, 0.65),
+              0 0 0 1px rgba(255, 87, 34, 0.2) !important;
+}
+
+body.bg-light .badges-card:hover {
+  box-shadow: 0 24px 52px rgba(0, 0, 0, 0.12) !important;
+}
+
+.dashboard-card-wrap:has(.badges-card):hover {
+  /* wrapper stays neutral — card owns the lift */
+}
+
+/* ==========================================
+   CONTEST CARD — WHOLE-CARD HOVER LIFT
+   ========================================== */
+
+.contest-card {
+  border-radius: 1rem;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.35s ease;
+  will-change: transform;
+  cursor: default;
+}
+
+.contest-card:hover {
+  transform: translateY(-14px);
+}
+
+body.bg-dark .contest-card:hover {
+  box-shadow: 0 24px 52px rgba(0, 0, 0, 0.65),
+              0 0 0 1px rgba(255, 87, 34, 0.2) !important;
+}
+
+body.bg-light .contest-card:hover {
+  box-shadow: 0 24px 52px rgba(0, 0, 0, 0.12) !important;
+}
+
+.dashboard-card-wrap:has(.contest-card):hover {
+  /* wrapper stays neutral */
+}
+
+/* ==========================================
+   RECENT SUBMISSIONS CARD — WHOLE-CARD HOVER LIFT
+   ========================================== */
+
+.submissions-card {
+  border-radius: 1rem;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.35s ease;
+  will-change: transform;
+  cursor: default;
+}
+
+.submissions-card:hover {
+  transform: translateY(-14px);
+}
+
+body.bg-dark .submissions-card:hover {
+  box-shadow: 0 24px 52px rgba(0, 0, 0, 0.65),
+              0 0 0 1px rgba(255, 87, 34, 0.2) !important;
+}
+
+body.bg-light .submissions-card:hover {
+  box-shadow: 0 24px 52px rgba(0, 0, 0, 0.12) !important;
+}
+
+.dashboard-card-wrap:has(.submissions-card):hover {
+  /* wrapper stays neutral */
 }

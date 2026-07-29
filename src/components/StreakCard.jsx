@@ -74,7 +74,7 @@ export default function StreakCard({ streakData }) {
   }, [cells]);
 
   return (
-    <div className="card shadow-sm p-4 mb-4 streak-card">
+    <div className="card shadow-sm p-4 streak-card">
       {/* Header */}
       <div className="d-flex align-items-center gap-2 mb-4">
         <span className="streak-flame" aria-hidden="true">🔥</span>
