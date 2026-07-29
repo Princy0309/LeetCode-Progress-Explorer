@@ -1,13 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { BrowserRouter, Routes, Route, Link, NavLink } from 'react-router-dom';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import GoalTracker from './pages/GoalTracker';
 import ComparePage from './pages/ComparePage';
 import ThemeToggle from './components/themeToggle';
+import AuthModal, { Avatar } from './components/AuthModal';
+import { useAuth } from './context/AuthContext';
 import { fetchLeetCodeData, fetchUserBadges, fetchUserContest, fetchRecentSubmissions, fetchSubmissionCalendar, fetchUserTagStats } from './services/leetcodeApi';
 
 export default function App() {
+  const { profile, isLoggedIn, signOut } = useAuth();
+  const [showAuth, setShowAuth]           = useState(false);
+  const [showDropdown, setShowDropdown]   = useState(false);
+  const dropdownRef                       = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handler = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
   const isPageReload = window.performance.getEntriesByType("navigation")[0]?.type === "reload";
 
   if (isPageReload) {
@@ -158,8 +175,55 @@ export default function App() {
                   <NavLink className="nav-link" to="/compare">Compare Users</NavLink>
                 </li>
               </ul>
-              <div className="d-flex mt-2 mt-lg-0">
+              <div className="d-flex align-items-center gap-2 mt-2 mt-lg-0">
                 <ThemeToggle darkMode={darkMode} setDarkMode={setDarkMode} />
+
+                {isLoggedIn ? (
+                  <div className="nav-profile-wrap" ref={dropdownRef}>
+                    <button
+                      className="nav-avatar-btn"
+                      onClick={() => setShowDropdown(d => !d)}
+                      aria-label="Profile menu"
+                      aria-expanded={showDropdown}
+                    >
+                      <Avatar
+                        displayName={profile.displayName}
+                        color={profile.avatarColor}
+                        size={34}
+                      />
+                      <span className="nav-avatar-name d-none d-md-inline">
+                        {profile.displayName}
+                      </span>
+                      <span className="nav-avatar-chevron">▾</span>
+                    </button>
+
+                    {showDropdown && (
+                      <div className="nav-dropdown">
+                        <div className="nav-dropdown-header">
+                          <Avatar displayName={profile.displayName} color={profile.avatarColor} size={40} />
+                          <div>
+                            <div className="fw-bold">{profile.displayName}</div>
+                            <div className="text-muted small">@{profile.username}</div>
+                          </div>
+                        </div>
+                        <hr className="my-1" />
+                        <button
+                          className="nav-dropdown-item text-danger"
+                          onClick={() => { signOut(); setShowDropdown(false); }}
+                        >
+                          🚪 Sign Out
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <button
+                    className="btn fire-btn btn-sm rounded-pill px-3"
+                    onClick={() => setShowAuth(true)}
+                  >
+                    Sign In
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -191,6 +255,8 @@ export default function App() {
             <Route path="/compare" element={<ComparePage darkMode={darkMode} />} />
           </Routes>
         </div>
+
+        {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
       </div>
     </BrowserRouter>
   );
