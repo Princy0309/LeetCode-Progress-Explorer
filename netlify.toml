@@ -1,0 +1,6 @@
+[[redirects]]
+  from = "/api/leetcode"
+  to = "https://corsproxy.io/?https://leetcode.com/graphql"
+  status = 200
+  force = true
+  headers = { x-requested-with = "XMLHttpRequest" }
