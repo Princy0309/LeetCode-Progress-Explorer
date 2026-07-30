@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import SearchBox from '../components/SearchBox';
+import SearchBox from '../components/searchBox';
 import UserProfile from '../components/UserProfile';
 import Badges from '../components/Badges';
 import ContestStats from '../components/ContestStats';
