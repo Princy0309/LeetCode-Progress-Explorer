@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function VisualInsights({ solved }) {
+export default function VisualInsights({ solved, darkMode = false }) {
   if (!solved) return null;
 
   const { easySolved, mediumSolved, hardSolved, totalSolved } = solved;
@@ -18,7 +18,7 @@ export default function VisualInsights({ solved }) {
             cx="50"
             cy="50"
             r={radius}
-            stroke="#1a1a1a"
+            stroke={darkMode ? '#ffffff' : '#1a1a1a'}
             strokeWidth="7"
             fill="transparent"
           />
@@ -40,25 +40,40 @@ export default function VisualInsights({ solved }) {
             textAnchor="middle"
             dominantBaseline="central"
             className="fw-bold"
-            style={{ fontSize: '18px', fill: '#f5f5f5' }}
+            style={{ fontSize: '18px', fill: darkMode ? '#ffffff' : '#080808' }}
           >
             {solvedCount}
           </text>
         </svg>
-        <span className="text-muted small text-uppercase tracking-wider fw-semibold">{label}</span>
+
+        <span
+          className="small text-uppercase tracking-wider fw-semibold"
+          style={{ color: darkMode ? '#ffffff' : '#6c757d' }}
+        >
+          {label}
+        </span>
       </div>
     );
   };
 
   return (
-    <div className="card shadow-lg p-4 rounded-4 fire-border perf-matrix-card">
+    <div className={`card shadow-lg p-4 rounded-4 fire-border perf-matrix-card ${darkMode ? 'bg-dark text-light' : 'bg-white text-dark'}`}>
       <div className="d-flex align-items-center justify-content-between mb-4">
-        <h4 className="m-0 fw-bold fire-gradient-text">Performance Matrix</h4>
-        <span className="badge px-3 py-2 rounded-pill" style={{ backgroundColor: 'rgba(255,87,34,0.15)', color: '#ff5722', border: '1px solid rgba(255,87,34,0.3)' }}>
+        <h4 className={`m-0 fw-bold ${darkMode ? 'text-light' : 'fire-gradient-text'}`}>
+          Performance Matrix
+        </h4>
+        <span
+          className="badge px-3 py-2 rounded-pill"
+          style={{
+            backgroundColor: darkMode ? 'rgba(255,255,255,0.12)' : 'rgba(255,87,34,0.15)',
+            color: darkMode ? '#ffffff' : '#ff5722',
+            border: darkMode ? '1px solid rgba(255,255,255,0.2)' : '1px solid rgba(255,87,34,0.3)',
+          }}
+        >
           Total Solved: {totalSolved}
         </span>
       </div>
-      
+
       <div className="row text-center justify-around align-items-center">
         <div className="col-4">
           {renderCircleRing(easySolved, 'Easy', '#00e676')}
