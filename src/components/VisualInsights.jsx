@@ -40,7 +40,7 @@ export default function VisualInsights({ solved, darkMode = false }) {
             textAnchor="middle"
             dominantBaseline="central"
             className="fw-bold"
-            style={{ fontSize: '18px', fill: darkMode ? '#ffffff' : '#080808' }}
+            style={{ fontSize: '18px', fill: darkMode ? '#e8f3e9' : '#080808' }}
           >
             {solvedCount}
           </text>
