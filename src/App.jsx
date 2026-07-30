@@ -4,7 +4,7 @@ import Home from './Pages/Home';
 import Dashboard from './Pages/Dashboard';
 import GoalTracker from './Pages/GoalTracker';
 import ComparePage from './Pages/ComparePage';
-import ThemeToggle from './components/ThemeToggle';
+import ThemeToggle from './components/ThemeToggle.jsx';
 import AuthModal, { Avatar } from './components/AuthModal';
 import { useAuth } from './context/AuthContext';
 import { fetchLeetCodeData, fetchUserBadges, fetchUserContest, fetchRecentSubmissions, fetchSubmissionCalendar, fetchUserTagStats } from './services/leetcodeApi';
