@@ -157,6 +157,7 @@ export default function App() {
       <div className={`min-vh-100 ${darkMode ? 'bg-dark text-light' : 'bg-light text-dark'}`}>
         <nav className={`navbar navbar-expand-lg ${darkMode ? 'navbar-dark bg-dark border-bottom border-secondary' : 'navbar-light bg-white border-bottom'} px-3 px-lg-4 py-2`}>
           <div className="container-fluid">
+            {/* Brand */}
             <Link
               className="navbar-brand fw-bold text-decoration-none me-3"
               to="/"
@@ -165,74 +166,20 @@ export default function App() {
               Lead-your-leet!
             </Link>
 
-            <div className="d-flex align-items-center gap-2 ms-auto">
-              <button
-                onClick={toggleTheme}
-                className={`btn btn-sm ${darkMode ? 'btn-outline-light' : 'btn-outline-dark'}`}
-              >
-                {darkMode ? '☀️ Light' : '🌙 Dark'}
-              </button>
+            {/* Mobile Toggler */}
+            <button
+              className="navbar-toggler border-0 p-2 d-lg-none ms-auto"
+              type="button"
+              onClick={() => setMobileMenuOpen(prev => !prev)}
+              aria-label="Toggle navigation"
+              aria-expanded={mobileMenuOpen}
+            >
+              <span className="navbar-toggler-icon"></span>
+            </button>
 
-              {isLoggedIn ? (
-                <div className="nav-profile-wrap" ref={dropdownRef}>
-                  <button
-                    className="nav-avatar-btn"
-                    onClick={() => setShowDropdown(d => !d)}
-                    aria-label="Profile menu"
-                    aria-expanded={showDropdown}
-                  >
-                    <Avatar
-                      displayName={profile.displayName}
-                      color={profile.avatarColor}
-                      size={34}
-                    />
-                    <span className="nav-avatar-name d-none d-md-inline">
-                      {profile.displayName}
-                    </span>
-                    <span className="nav-avatar-chevron">▾</span>
-                  </button>
-
-                  {showDropdown && (
-                    <div className="nav-dropdown">
-                      <div className="nav-dropdown-header">
-                        <Avatar displayName={profile.displayName} color={profile.avatarColor} size={40} />
-                        <div>
-                          <div className="fw-bold">{profile.displayName}</div>
-                          <div className="text-muted small">@{profile.username}</div>
-                        </div>
-                      </div>
-                      <hr className="my-1" />
-                      <button
-                        className="nav-dropdown-item text-danger"
-                        onClick={() => { signOut(); setShowDropdown(false); }}
-                      >
-                        🚪 Sign Out
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <button
-                  className="btn fire-btn btn-sm rounded-pill px-3"
-                  onClick={() => setShowAuth(true)}
-                >
-                  Sign In
-                </button>
-              )}
-
-              <button
-                className="navbar-toggler border-0 p-2 d-lg-none"
-                type="button"
-                onClick={() => setMobileMenuOpen(prev => !prev)}
-                aria-label="Toggle navigation"
-                aria-expanded={mobileMenuOpen}
-              >
-                <span className="navbar-toggler-icon"></span>
-              </button>
-            </div>
-
-            <div className={`navbar-collapse ${mobileMenuOpen ? 'show' : ''} mt-2 mt-lg-0`}>
-              <ul className="navbar-nav me-auto mb-2 mb-lg-0 w-100 align-items-lg-center">
+            {/* Collapsible Content */}
+            <div className={`collapse navbar-collapse ${mobileMenuOpen ? 'show' : ''} mt-2 mt-lg-0`}>
+              <ul className="navbar-nav me-auto mb-2 mb-lg-0 align-items-lg-center">
                 <li className="nav-item">
                   <NavLink
                     className="nav-link"
@@ -261,6 +208,63 @@ export default function App() {
                   </NavLink>
                 </li>
               </ul>
+
+              {/* Right Side Items (Theme Toggle & Auth) */}
+              <div className="d-flex align-items-center gap-2 ms-lg-auto mt-2 mt-lg-0">
+                <button
+                  onClick={toggleTheme}
+                  className={`btn btn-sm ${darkMode ? 'btn-outline-light' : 'btn-outline-dark'}`}
+                >
+                  {darkMode ? '☀️ Light' : '🌙 Dark'}
+                </button>
+
+                {isLoggedIn ? (
+                  <div className="nav-profile-wrap" ref={dropdownRef}>
+                    <button
+                      className="nav-avatar-btn"
+                      onClick={() => setShowDropdown(d => !d)}
+                      aria-label="Profile menu"
+                      aria-expanded={showDropdown}
+                    >
+                      <Avatar
+                        displayName={profile.displayName}
+                        color={profile.avatarColor}
+                        size={34}
+                      />
+                      <span className="nav-avatar-name d-none d-md-inline">
+                        {profile.displayName}
+                      </span>
+                      <span className="nav-avatar-chevron">▾</span>
+                    </button>
+
+                    {showDropdown && (
+                      <div className="nav-dropdown">
+                        <div className="nav-dropdown-header">
+                          <Avatar displayName={profile.displayName} color={profile.avatarColor} size={40} />
+                          <div>
+                            <div className="fw-bold">{profile.displayName}</div>
+                            <div className="text-muted small">@{profile.username}</div>
+                          </div>
+                        </div>
+                        <hr className="my-1" />
+                        <button
+                          className="nav-dropdown-item text-danger"
+                          onClick={() => { signOut(); setShowDropdown(false); }}
+                        >
+                          🚪 Sign Out
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <button
+                    className="btn fire-btn btn-sm rounded-pill px-3"
+                    onClick={() => setShowAuth(true)}
+                  >
+                    Sign In
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </nav>

@@ -26,7 +26,7 @@ const cmp = (a, b) => (a > b ? 1 : a < b ? -1 : 0);
 
 // ─── Single stat row ──────────────────────────────────────────────────────────
 function StatRow({ label, v1, v2, higherIsBetter = true, formatter = (x) => x, darkMode = false }) {
-  const winner = higherIsBetter ? cmp(v1, v2) : cmp(v2, v1); // 1=left, -1=right, 0=tie
+  const winner = higherIsBetter ? cmp(v1, v2) : cmp(v2, v1);
 
   return (
     <div className={`cmp-stat-row ${darkMode ? 'text-light' : 'text-dark'}`}>
@@ -132,7 +132,6 @@ export default function ComparePage({ darkMode }) {
     if (e.key === 'Enter') handleCompare();
   };
 
-  // Determine overall winner by total solved + contest rating (weighted)
   let overallWinner = null;
   if (data1 && data2) {
     const score1 =
@@ -146,7 +145,6 @@ export default function ComparePage({ darkMode }) {
 
   return (
     <div className={`container mt-4 pb-5 ${darkMode ? 'text-light' : 'text-dark'}`}>
-      {/* ── Header ── */}
       <div className="text-center mb-4">
         <h1 className="fw-bold mb-1">Compare Profiles</h1>
         <p className={`mb-0 ${darkMode ? 'text-light-emphasis' : 'text-muted'}`}>
@@ -154,7 +152,6 @@ export default function ComparePage({ darkMode }) {
         </p>
       </div>
 
-      {/* ── Input card ── */}
       <div className={`card shadow-sm p-4 mb-4 cmp-input-card ${darkMode ? 'bg-dark border border-secondary text-light' : 'bg-white border border-light text-dark'}`}>
         <div className="row g-3 align-items-end">
           <div className="col-md-5">
@@ -214,10 +211,8 @@ export default function ComparePage({ darkMode }) {
         )}
       </div>
 
-      {/* ── Results ── */}
       {data1 && data2 && (
         <div className={`cmp-results-card card shadow-sm p-4 ${darkMode ? 'bg-dark border border-secondary text-light' : 'bg-white border border-light text-dark'}`}>
-          {/* Overall winner banner */}
           {overallWinner !== 0 && (
             <div className={`cmp-winner-banner mb-4 ${darkMode ? 'bg-secondary text-light' : ''}`}>
               🏆 <strong>{overallWinner === 1 ? data1.username : data2.username}</strong> is ahead overall!
@@ -229,7 +224,6 @@ export default function ComparePage({ darkMode }) {
             </div>
           )}
 
-          {/* Player header cards */}
           <div className="row g-3 mb-4">
             <div className="col-6">
               <PlayerCard username={data1.username} isWinner={overallWinner === 1} darkMode={darkMode} />
@@ -239,7 +233,6 @@ export default function ComparePage({ darkMode }) {
             </div>
           </div>
 
-          {/* Stat rows */}
           <div className="cmp-stat-table mb-4">
             <StatRow
               label="Total Solved"
@@ -270,37 +263,6 @@ export default function ComparePage({ darkMode }) {
               label="Badges"
               v1={Array.isArray(data1.badges) ? data1.badges.length : 0}
               v2={Array.isArray(data2.badges) ? data2.badges.length : 0}
-              darkMode={darkMode}
-            />
-          </div>
-
-          {/* Difficulty bar chart */}
-          <div className={`cmp-bars-section mb-2 p-3 rounded-4 border ${darkMode ? 'bg-dark border-secondary' : 'bg-light border-light'}`}>
-            <h6 className={`text-uppercase small fw-bold mb-3 text-center ${darkMode ? 'text-light' : 'text-muted'}`}>
-              Difficulty Breakdown
-            </h6>
-
-            <DiffBar
-              label="Easy"
-              v1={data1.solved.easySolved || 0}
-              v2={data2.solved.easySolved || 0}
-              color="#00e676"
-              darkMode={darkMode}
-            />
-
-            <DiffBar
-              label="Medium"
-              v1={data1.solved.mediumSolved || 0}
-              v2={data2.solved.mediumSolved || 0}
-              color="#ff9800"
-              darkMode={darkMode}
-            />
-
-            <DiffBar
-              label="Hard"
-              v1={data1.solved.hardSolved || 0}
-              v2={data2.solved.hardSolved || 0}
-              color="#ff5252"
               darkMode={darkMode}
             />
           </div>
