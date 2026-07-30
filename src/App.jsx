@@ -4,16 +4,15 @@ import Home from './Pages/Home';
 import Dashboard from './Pages/Dashboard';
 import GoalTracker from './Pages/GoalTracker';
 import ComparePage from './Pages/ComparePage';
-import ThemeToggle from './components/ThemeToggle.jsx';
 import AuthModal, { Avatar } from './components/AuthModal';
 import { useAuth } from './context/AuthContext';
 import { fetchLeetCodeData, fetchUserBadges, fetchUserContest, fetchRecentSubmissions, fetchSubmissionCalendar, fetchUserTagStats } from './services/leetcodeApi';
 
 export default function App() {
   const { profile, isLoggedIn, signOut } = useAuth();
-  const [showAuth, setShowAuth]           = useState(false);
-  const [showDropdown, setShowDropdown]   = useState(false);
-  const dropdownRef                       = useRef(null);
+  const [showAuth, setShowAuth] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -25,6 +24,7 @@ export default function App() {
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
+
   const isPageReload = window.performance.getEntriesByType("navigation")[0]?.type === "reload";
 
   if (isPageReload) {
@@ -35,6 +35,10 @@ export default function App() {
     const savedTheme = localStorage.getItem('lc_app_dark_mode');
     return savedTheme !== null ? JSON.parse(savedTheme) : true;
   });
+
+  const toggleTheme = () => {
+    setDarkMode(!darkMode);
+  };
 
   const [username, setUsername] = useState(() => sessionStorage.getItem('lc_app_username') || '');
   const [userData, setUserData] = useState(() => {
@@ -96,7 +100,7 @@ export default function App() {
       alert("Please enter a valid username");
       return;
     }
-    
+
     setLoading(true);
     setError(null);
     setUserData(null);
@@ -108,20 +112,20 @@ export default function App() {
 
     try {
       const [solvedData, badgeData, contestRes, submissionRes, streakRes, tagRes] = await Promise.allSettled([
-        fetchLeetCodeData(targetUser), 
-        fetchUserBadges(targetUser), 
-        fetchUserContest(targetUser), 
+        fetchLeetCodeData(targetUser),
+        fetchUserBadges(targetUser),
+        fetchUserContest(targetUser),
         fetchRecentSubmissions(targetUser),
         fetchSubmissionCalendar(targetUser),
         fetchUserTagStats(targetUser),
       ]);
 
-      const solved      = solvedData.status    === 'fulfilled' ? solvedData.value    : null;
-      const badgesVal   = badgeData.status     === 'fulfilled' ? badgeData.value     : null;
-      const contestVal  = contestRes.status    === 'fulfilled' ? contestRes.value    : null;
+      const solved = solvedData.status === 'fulfilled' ? solvedData.value : null;
+      const badgesVal = badgeData.status === 'fulfilled' ? badgeData.value : null;
+      const contestVal = contestRes.status === 'fulfilled' ? contestRes.value : null;
       const submissionVal = submissionRes.status === 'fulfilled' ? submissionRes.value : null;
-      const streakVal   = streakRes.status     === 'fulfilled' ? streakRes.value     : null;
-      const tagVal      = tagRes.status        === 'fulfilled' ? tagRes.value        : null;
+      const streakVal = streakRes.status === 'fulfilled' ? streakRes.value : null;
+      const tagVal = tagRes.status === 'fulfilled' ? tagRes.value : null;
 
       if (!solved) {
         throw new Error("User not found.");
@@ -152,13 +156,13 @@ export default function App() {
         <nav className={`navbar navbar-expand-lg ${darkMode ? 'navbar-dark bg-dark border-bottom border-secondary' : 'navbar-light bg-white border-bottom'} px-3 px-lg-4 mb-4`}>
           <div className="container-fluid">
             <Link className="navbar-brand fw-bold text-decoration-none" to="/">Lead-your-leet!</Link>
-            <button 
-              className="navbar-toggler" 
-              type="button" 
-              data-bs-toggle="collapse" 
-              data-bs-target="#navbarNav" 
-              aria-controls="navbarNav" 
-              aria-expanded="false" 
+            <button
+              className="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarNav"
+              aria-controls="navbarNav"
+              aria-expanded="false"
               aria-label="Toggle navigation"
             >
               <span className="navbar-toggler-icon"></span>
@@ -176,7 +180,12 @@ export default function App() {
                 </li>
               </ul>
               <div className="d-flex align-items-center gap-2 mt-2 mt-lg-0">
-                <ThemeToggle darkMode={darkMode} setDarkMode={setDarkMode} />
+                <button
+                  onClick={toggleTheme}
+                  className={`btn btn-sm ${darkMode ? 'btn-outline-light' : 'btn-outline-dark'}`}
+                >
+                  {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
+                </button>
 
                 {isLoggedIn ? (
                   <div className="nav-profile-wrap" ref={dropdownRef}>
@@ -232,10 +241,10 @@ export default function App() {
         <div className="container px-3 px-md-4">
           <Routes>
             <Route path="/" element={<Home darkMode={darkMode} />} />
-            <Route 
-              path="/dashboard" 
+            <Route
+              path="/dashboard"
               element={
-                <Dashboard 
+                <Dashboard
                   username={username}
                   setUsername={setUsername}
                   userData={userData}
@@ -249,7 +258,7 @@ export default function App() {
                   onSearch={handleSearch}
                   darkMode={darkMode}
                 />
-              } 
+              }
             />
             <Route path="/practice" element={<GoalTracker darkMode={darkMode} />} />
             <Route path="/compare" element={<ComparePage darkMode={darkMode} />} />
