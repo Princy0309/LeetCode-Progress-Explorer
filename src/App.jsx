@@ -12,9 +12,9 @@ export default function App() {
   const { profile, isLoggedIn, signOut } = useAuth();
   const [showAuth, setShowAuth] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handler = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -37,8 +37,10 @@ export default function App() {
   });
 
   const toggleTheme = () => {
-    setDarkMode(!darkMode);
+    setDarkMode(prev => !prev);
   };
+
+  const closeMobileMenu = () => setMobileMenuOpen(false);
 
   const [username, setUsername] = useState(() => sessionStorage.getItem('lc_app_username') || '');
   const [userData, setUserData] = useState(() => {
@@ -153,92 +155,117 @@ export default function App() {
   return (
     <BrowserRouter>
       <div className={`min-vh-100 ${darkMode ? 'bg-dark text-light' : 'bg-light text-dark'}`}>
-        <nav className={`navbar navbar-expand-lg ${darkMode ? 'navbar-dark bg-dark border-bottom border-secondary' : 'navbar-light bg-white border-bottom'} px-3 px-lg-4 mb-4`}>
+        <nav className={`navbar navbar-expand-lg ${darkMode ? 'navbar-dark bg-dark border-bottom border-secondary' : 'navbar-light bg-white border-bottom'} px-3 px-lg-4 py-2`}>
           <div className="container-fluid">
-            <Link className="navbar-brand fw-bold text-decoration-none" to="/">Lead-your-leet!</Link>
-            <button
-              className="navbar-toggler"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#navbarNav"
-              aria-controls="navbarNav"
-              aria-expanded="false"
-              aria-label="Toggle navigation"
+            <Link
+              className="navbar-brand fw-bold text-decoration-none me-3"
+              to="/"
+              onClick={closeMobileMenu}
             >
-              <span className="navbar-toggler-icon"></span>
-            </button>
-            <div className="collapse navbar-collapse" id="navbarNav">
-              <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+              Lead-your-leet!
+            </Link>
+
+            <div className="d-flex align-items-center gap-2 ms-auto">
+              <button
+                onClick={toggleTheme}
+                className={`btn btn-sm ${darkMode ? 'btn-outline-light' : 'btn-outline-dark'}`}
+              >
+                {darkMode ? '☀️ Light' : '🌙 Dark'}
+              </button>
+
+              {isLoggedIn ? (
+                <div className="nav-profile-wrap" ref={dropdownRef}>
+                  <button
+                    className="nav-avatar-btn"
+                    onClick={() => setShowDropdown(d => !d)}
+                    aria-label="Profile menu"
+                    aria-expanded={showDropdown}
+                  >
+                    <Avatar
+                      displayName={profile.displayName}
+                      color={profile.avatarColor}
+                      size={34}
+                    />
+                    <span className="nav-avatar-name d-none d-md-inline">
+                      {profile.displayName}
+                    </span>
+                    <span className="nav-avatar-chevron">▾</span>
+                  </button>
+
+                  {showDropdown && (
+                    <div className="nav-dropdown">
+                      <div className="nav-dropdown-header">
+                        <Avatar displayName={profile.displayName} color={profile.avatarColor} size={40} />
+                        <div>
+                          <div className="fw-bold">{profile.displayName}</div>
+                          <div className="text-muted small">@{profile.username}</div>
+                        </div>
+                      </div>
+                      <hr className="my-1" />
+                      <button
+                        className="nav-dropdown-item text-danger"
+                        onClick={() => { signOut(); setShowDropdown(false); }}
+                      >
+                        🚪 Sign Out
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <button
+                  className="btn fire-btn btn-sm rounded-pill px-3"
+                  onClick={() => setShowAuth(true)}
+                >
+                  Sign In
+                </button>
+              )}
+
+              <button
+                className="navbar-toggler border-0 p-2 d-lg-none"
+                type="button"
+                onClick={() => setMobileMenuOpen(prev => !prev)}
+                aria-label="Toggle navigation"
+                aria-expanded={mobileMenuOpen}
+              >
+                <span className="navbar-toggler-icon"></span>
+              </button>
+            </div>
+
+            <div className={`navbar-collapse ${mobileMenuOpen ? 'show' : ''} mt-2 mt-lg-0`}>
+              <ul className="navbar-nav me-auto mb-2 mb-lg-0 w-100 align-items-lg-center">
                 <li className="nav-item">
-                  <NavLink className="nav-link" to="/dashboard">Dashboard</NavLink>
+                  <NavLink
+                    className="nav-link"
+                    to="/dashboard"
+                    onClick={closeMobileMenu}
+                  >
+                    Dashboard
+                  </NavLink>
                 </li>
                 <li className="nav-item">
-                  <NavLink className="nav-link" to="/practice">Goals</NavLink>
+                  <NavLink
+                    className="nav-link"
+                    to="/practice"
+                    onClick={closeMobileMenu}
+                  >
+                    Goals
+                  </NavLink>
                 </li>
                 <li className="nav-item">
-                  <NavLink className="nav-link" to="/compare">Compare Users</NavLink>
+                  <NavLink
+                    className="nav-link"
+                    to="/compare"
+                    onClick={closeMobileMenu}
+                  >
+                    Compare Users
+                  </NavLink>
                 </li>
               </ul>
-              <div className="d-flex align-items-center gap-2 mt-2 mt-lg-0">
-                <button
-                  onClick={toggleTheme}
-                  className={`btn btn-sm ${darkMode ? 'btn-outline-light' : 'btn-outline-dark'}`}
-                >
-                  {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
-                </button>
-
-                {isLoggedIn ? (
-                  <div className="nav-profile-wrap" ref={dropdownRef}>
-                    <button
-                      className="nav-avatar-btn"
-                      onClick={() => setShowDropdown(d => !d)}
-                      aria-label="Profile menu"
-                      aria-expanded={showDropdown}
-                    >
-                      <Avatar
-                        displayName={profile.displayName}
-                        color={profile.avatarColor}
-                        size={34}
-                      />
-                      <span className="nav-avatar-name d-none d-md-inline">
-                        {profile.displayName}
-                      </span>
-                      <span className="nav-avatar-chevron">▾</span>
-                    </button>
-
-                    {showDropdown && (
-                      <div className="nav-dropdown">
-                        <div className="nav-dropdown-header">
-                          <Avatar displayName={profile.displayName} color={profile.avatarColor} size={40} />
-                          <div>
-                            <div className="fw-bold">{profile.displayName}</div>
-                            <div className="text-muted small">@{profile.username}</div>
-                          </div>
-                        </div>
-                        <hr className="my-1" />
-                        <button
-                          className="nav-dropdown-item text-danger"
-                          onClick={() => { signOut(); setShowDropdown(false); }}
-                        >
-                          🚪 Sign Out
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <button
-                    className="btn fire-btn btn-sm rounded-pill px-3"
-                    onClick={() => setShowAuth(true)}
-                  >
-                    Sign In
-                  </button>
-                )}
-              </div>
             </div>
           </div>
         </nav>
 
-        <div className="container px-3 px-md-4">
+        <div className="container-fluid px-2 px-sm-3 px-lg-4 pb-4">
           <Routes>
             <Route path="/" element={<Home darkMode={darkMode} />} />
             <Route
@@ -263,6 +290,46 @@ export default function App() {
             <Route path="/practice" element={<GoalTracker darkMode={darkMode} />} />
             <Route path="/compare" element={<ComparePage darkMode={darkMode} />} />
           </Routes>
+        </div>
+
+        <div className={`d-lg-none position-sticky bottom-0 start-0 end-0 border-top ${darkMode ? 'bg-dark border-secondary' : 'bg-white border-light'} px-2 py-2`} style={{ zIndex: 1030 }}>
+          <div className="d-flex justify-content-around gap-2">
+            <NavLink
+              to="/dashboard"
+              onClick={closeMobileMenu}
+              className={({ isActive }) =>
+                `btn btn-sm flex-fill ${isActive
+                  ? darkMode ? 'btn-light text-dark' : 'btn-dark text-light'
+                  : darkMode ? 'btn-outline-light' : 'btn-outline-dark'}`
+              }
+            >
+              📊 Dashboard
+            </NavLink>
+
+            <NavLink
+              to="/practice"
+              onClick={closeMobileMenu}
+              className={({ isActive }) =>
+                `btn btn-sm flex-fill ${isActive
+                  ? darkMode ? 'btn-light text-dark' : 'btn-dark text-light'
+                  : darkMode ? 'btn-outline-light' : 'btn-outline-dark'}`
+              }
+            >
+              🎯 Goals
+            </NavLink>
+
+            <NavLink
+              to="/compare"
+              onClick={closeMobileMenu}
+              className={({ isActive }) =>
+                `btn btn-sm flex-fill ${isActive
+                  ? darkMode ? 'btn-light text-dark' : 'btn-dark text-light'
+                  : darkMode ? 'btn-outline-light' : 'btn-outline-dark'}`
+              }
+            >
+              👥 Compare
+            </NavLink>
+          </div>
         </div>
 
         {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
