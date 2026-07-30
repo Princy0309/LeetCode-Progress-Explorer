@@ -1,5 +1,15 @@
-const CORS_PROXY = "https://proxy.corsfix.com/?";
-const LEETCODE_GRAPHQL = "https://leetcode.com/graphql";
+const API_ENDPOINT = "/api/leetcode";
+
+async function postQuery(query, variables) {
+  const response = await fetch(API_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query, variables }),
+  });
+
+  if (!response.ok) throw new Error("API proxy error");
+  return await response.json();
+}
 
 export async function fetchLeetCodeData(username) {
   try {
@@ -17,13 +27,7 @@ export async function fetchLeetCodeData(username) {
       }
     `;
 
-    const response = await fetch(`${CORS_PROXY}${LEETCODE_GRAPHQL}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query, variables: { username } }),
-    });
-
-    const json = await response.json();
+    const json = await postQuery(query, { username });
     const stats = json.data?.matchedUser?.submitStats?.acSubmissionNum;
 
     if (!stats) throw new Error("User not found");
@@ -54,14 +58,7 @@ export async function fetchUserBadges(username) {
         }
       }
     `;
-
-    const response = await fetch(`${CORS_PROXY}${LEETCODE_GRAPHQL}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query, variables: { username } }),
-    });
-
-    const json = await response.json();
+    const json = await postQuery(query, { username });
     return json.data?.matchedUser?.badges || [];
   } catch (error) {
     console.error("Error fetching badges:", error);
@@ -80,14 +77,7 @@ export async function fetchUserContest(username) {
         }
       }
     `;
-
-    const response = await fetch(`${CORS_PROXY}${LEETCODE_GRAPHQL}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query, variables: { username } }),
-    });
-
-    const json = await response.json();
+    const json = await postQuery(query, { username });
     const contestData = json.data?.userContestRanking;
 
     if (!contestData) {
@@ -118,19 +108,8 @@ export async function fetchRecentSubmissions(username) {
   `;
 
   try {
-    const response = await fetch(`${CORS_PROXY}${LEETCODE_GRAPHQL}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        query,
-        variables: { username },
-      }),
-    });
-
-    const data = await response.json();
-    return data?.data?.recentAcSubmissionList || [];
+    const json = await postQuery(query, { username });
+    return json?.data?.recentAcSubmissionList || [];
   } catch (error) {
     console.error("Error fetching recent submissions:", error);
     return [];
@@ -151,19 +130,12 @@ export async function fetchSubmissionCalendar(username) {
   `;
 
   try {
-    const response = await fetch(`${CORS_PROXY}${LEETCODE_GRAPHQL}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query, variables: { username } }),
-    });
-
-    const json = await response.json();
+    const json = await postQuery(query, { username });
     const calendar = json.data?.matchedUser?.userCalendar;
 
     if (!calendar) return null;
 
     const rawMap = JSON.parse(calendar.submissionCalendar || "{}");
-
     const dayMap = {};
     for (const [ts, count] of Object.entries(rawMap)) {
       const dateKey = new Date(Number(ts) * 1000).toISOString().slice(0, 10);
@@ -172,7 +144,6 @@ export async function fetchSubmissionCalendar(username) {
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-
     const toKey = (d) => d.toISOString().slice(0, 10);
 
     let currentStreak = 0;
@@ -191,11 +162,8 @@ export async function fetchSubmissionCalendar(username) {
       const d = new Date(key);
       if (prevDate) {
         const diff = (d - prevDate) / (1000 * 60 * 60 * 24);
-        if (diff === 1) {
-          run++;
-        } else {
-          run = 1;
-        }
+        if (diff === 1) run++;
+        else run = 1;
       } else {
         run = 1;
       }
@@ -220,44 +188,24 @@ export async function fetchUserTagStats(username) {
     query userTagStats($username: String!) {
       matchedUser(username: $username) {
         tagProblemCounts {
-          advanced {
-            tagName
-            tagSlug
-            problemsSolved
-          }
-          intermediate {
-            tagName
-            tagSlug
-            problemsSolved
-          }
-          fundamental {
-            tagName
-            tagSlug
-            problemsSolved
-          }
+          advanced { tagName tagSlug problemsSolved }
+          intermediate { tagName tagSlug problemsSolved }
+          fundamental { tagName tagSlug problemsSolved }
         }
       }
     }
   `;
 
   try {
-    const response = await fetch(`${CORS_PROXY}${LEETCODE_GRAPHQL}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query, variables: { username } }),
-    });
-
-    const json = await response.json();
+    const json = await postQuery(query, { username });
     const tagData = json.data?.matchedUser?.tagProblemCounts;
     if (!tagData) return null;
 
-    const allTags = [
+    return [
       ...tagData.fundamental.map(t => ({ ...t, tier: 'fundamental' })),
       ...tagData.intermediate.map(t => ({ ...t, tier: 'intermediate' })),
       ...tagData.advanced.map(t => ({ ...t, tier: 'advanced' })),
     ];
-
-    return allTags;
   } catch (error) {
     console.error("Error fetching tag stats:", error);
     return null;
