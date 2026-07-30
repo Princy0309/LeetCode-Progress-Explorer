@@ -1,4 +1,4 @@
-const CORS_PROXY = "https://corsproxy.io/?";
+const CORS_PROXY = "https://proxy.corsfix.com/?";
 const LEETCODE_GRAPHQL = "https://leetcode.com/graphql";
 
 export async function fetchLeetCodeData(username) {
@@ -162,33 +162,27 @@ export async function fetchSubmissionCalendar(username) {
 
     if (!calendar) return null;
 
-    // submissionCalendar is a JSON string: { "unixTimestamp": count, ... }
     const rawMap = JSON.parse(calendar.submissionCalendar || "{}");
 
-    // Convert to a Map keyed by YYYY-MM-DD for easy lookup
     const dayMap = {};
     for (const [ts, count] of Object.entries(rawMap)) {
       const dateKey = new Date(Number(ts) * 1000).toISOString().slice(0, 10);
       dayMap[dateKey] = (dayMap[dateKey] || 0) + count;
     }
 
-    // Compute current streak and longest streak from the day map
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
     const toKey = (d) => d.toISOString().slice(0, 10);
 
-    // Current streak: walk backwards from today (or yesterday if today has no submission yet)
     let currentStreak = 0;
     const cursor = new Date(today);
-    // If today has no submission, still allow streak to count if yesterday had one
     if (!dayMap[toKey(cursor)]) cursor.setDate(cursor.getDate() - 1);
     while (dayMap[toKey(cursor)]) {
       currentStreak++;
       cursor.setDate(cursor.getDate() - 1);
     }
 
-    // Longest streak: iterate over sorted day keys
     const sortedDays = Object.keys(dayMap).sort();
     let longest = 0;
     let run = 0;
@@ -257,7 +251,6 @@ export async function fetchUserTagStats(username) {
     const tagData = json.data?.matchedUser?.tagProblemCounts;
     if (!tagData) return null;
 
-    // Flatten all three tiers into one list, keeping tier info
     const allTags = [
       ...tagData.fundamental.map(t => ({ ...t, tier: 'fundamental' })),
       ...tagData.intermediate.map(t => ({ ...t, tier: 'intermediate' })),
