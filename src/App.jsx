@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { BrowserRouter, Routes, Route, Link, NavLink } from 'react-router-dom';
-import Home from './pages/Home';
+import Home from './Pages/Home';
 import Dashboard from './pages/Dashboard';
 import GoalTracker from './pages/GoalTracker';
 import ComparePage from './pages/ComparePage';
-import ThemeToggle from './components/themeToggle';
+import ThemeToggle from './components/ThemeToggle';
 import AuthModal, { Avatar } from './components/AuthModal';
 import { useAuth } from './context/AuthContext';
 import { fetchLeetCodeData, fetchUserBadges, fetchUserContest, fetchRecentSubmissions, fetchSubmissionCalendar, fetchUserTagStats } from './services/leetcodeApi';
